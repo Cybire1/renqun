@@ -1,0 +1,8 @@
+# Foundry build output
+/out/
+/cache/
+broadcast/*/31337/
+# Vendored deps: restore with `forge install` (see README)
+/lib/
+.env
+broadcast/**/dry-run/

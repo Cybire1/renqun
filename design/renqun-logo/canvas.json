@@ -1,0 +1,47 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "title": "Renqun mark",
+      "x": 0,
+      "y": 0,
+      "w": 1200,
+      "h": 740
+    },
+    {
+      "file": "AppIcon.dc.html",
+      "title": "App icon master (iOS masks the corners)",
+      "x": 1280,
+      "y": 0,
+      "w": 512,
+      "h": 512
+    },
+    {
+      "file": "InApp.dc.html",
+      "title": "In the app",
+      "x": 0,
+      "y": 860,
+      "w": 390,
+      "h": 400
+    },
+    {
+      "file": "OnePerson.dc.html",
+      "title": "Alternate: One person",
+      "x": 470,
+      "y": 860,
+      "w": 440,
+      "h": 320
+    },
+    {
+      "file": "CrowdOfDots.dc.html",
+      "title": "Alternate: Crowd of dots",
+      "x": 990,
+      "y": 860,
+      "w": 440,
+      "h": 320
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

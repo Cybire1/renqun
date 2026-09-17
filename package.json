@@ -1,0 +1,16 @@
+{
+  "name": "renqun",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bitcoin price rounds paid in MUSD on Mezo: contracts, keeper, starter drip, web client and the Renqun app.",
+  "scripts": {
+    "keeper": "node services/keeper/keeper.mjs",
+    "drip": "node services/drip/drip.mjs",
+    "contracts:test": "cd contracts && forge test",
+    "abi": "node scripts/abi.mjs",
+    "app": "cd mobile && npx expo start"
+  },
+  "dependencies": {
+    "viem": "^2.55.13"
+  }
+}

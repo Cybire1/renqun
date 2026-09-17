@@ -1,0 +1,14 @@
+node_modules/
+.DS_Store
+*.log
+
+# secrets and local env
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# service state and logs
+.keeper/
+services/drip/.drip-state.json

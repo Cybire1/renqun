@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600;700&amp;family=Sora:wght@600;700;800&amp;display=swap">
+  <style>
+    body { margin: 0; background: #F4F0ED; color: #171717; font-family: Inter, -apple-system, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    a { color: #171717; font-weight: 600; text-decoration: underline; text-decoration-color: #FF004D; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+    a:hover { color: #000000; text-decoration-color: #D10069; }
+    .d { font-family: Sora, "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+    .m { font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; }
+    .t { font-variant-numeric: tabular-nums; }
+  </style>
+</helmet>
+<div style="width: 400px; padding: 0; background: #F4F0ED;">
+  <div style="background: #FFFFFF; border: 1px solid #E2E2E2; border-radius: 8px; padding: 20px;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+    <span class="m" style="width: 36px; height: 36px; flex-shrink: 0; border-radius: 999px; border: 1px solid #E2E2E2; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #171717;">₿</span>
+    <div>
+      <div class="d" style="font-weight: 800; font-size: 20px; line-height: 1.1; color: #000000;">BTC · 1 hour</div>
+      <div class="m" style="margin-top: 4px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">settles in <span class="t" style="color: #171717;">53:42</span> · BTC $76,240</div>
+    </div>
+  </div>
+    <div style="display: flex; gap: 4px; padding: 4px; margin-bottom: 12px; border: 1px solid #EEEEEE; background: #F6F6F6; border-radius: 6px;"><div class="m" style="flex: 1; text-align: center; padding: 8px 0; border-radius: 4px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">Direction</div><div class="m" style="flex: 1; text-align: center; padding: 8px 0; border-radius: 4px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.08); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #171717;">Range</div></div>
+    <div style="margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+        <span class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">Winning range</span>
+        <span class="m" style="font-size: 9px; color: #6B6B6B;">BTC must finish inside</span>
+      </div>
+      <div style="border: 1px solid #E2E2E2; border-radius: 6px; overflow: hidden;">
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 10px 12px 0;">
+          <div>
+            <span class="m" style="display: block; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">From</span>
+            <strong class="m t" style="display: block; margin-top: 2px; font-size: 13px; font-weight: 700; color: #171717;">$76,110</strong>
+          </div>
+          <span style="color: #CBCBCB; display: flex;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+          <div style="text-align: right;">
+            <span class="m" style="display: block; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">To</span>
+            <strong class="m t" style="display: block; margin-top: 2px; font-size: 13px; font-weight: 700; color: #171717;">$76,310</strong>
+          </div>
+        </div>
+        <div style="position: relative; height: 34px; margin: 0 12px;">
+          <div style="position: absolute; left: 0; right: 0; top: 17px; height: 1px; background: #E2E2E2;"></div>
+          <div style="position: absolute; left: 25%; right: 41.67%; top: 5px; height: 24px;">
+            <div style="position: absolute; left: 0; right: 0; top: 8px; height: 8px; border-radius: 2px; background: rgba(255,0,77,0.18); border-left: 1px solid #FF004D; border-right: 1px solid #FF004D;"></div>
+            <div style="position: absolute; left: 50%; top: 7px; transform: translateX(-50%); display: flex; gap: 1px;">
+              <span style="width: 1px; height: 10px; background: rgba(255,0,77,0.8);"></span>
+              <span style="width: 1px; height: 10px; background: rgba(255,0,77,0.8);"></span>
+              <span style="width: 1px; height: 10px; background: rgba(255,0,77,0.8);"></span>
+            </div>
+          </div>
+          <div style="position: absolute; left: 46.67%; top: 10px; width: 1px; height: 14px; background: #171717;"></div>
+          <div style="position: absolute; left: 46.67%; top: 14px; width: 6px; height: 6px; margin-left: -3px; border-radius: 999px; background: #171717;"></div>
+        </div>
+        <div class="m" style="display: flex; justify-content: space-between; padding: 6px 12px; border-top: 1px solid #EEEEEE; font-size: 9px; color: #6B6B6B;">
+          <span class="t">$75,960</span>
+          <span>spot <span class="t" style="color: #171717;">$76,240</span></span>
+          <span class="t">$76,560</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin-top: 8px;"><div style="border: 1px solid #E2E2E2; border-radius: 4px; padding: 6px 8px;"><span class="d" style="display: block; font-weight: 600; font-size: 11px; line-height: 1; color: #545454;">Tight</span><span class="m t" style="display: block; margin-top: 4px; font-size: 9px; color: #6B6B6B;">$100 span</span></div><div style="border: 1px solid rgba(255,0,77,0.7); background: rgba(255,0,77,0.06); border-radius: 4px; padding: 6px 8px;"><span class="d" style="display: block; font-weight: 600; font-size: 11px; line-height: 1; color: #171717;">Normal</span><span class="m t" style="display: block; margin-top: 4px; font-size: 9px; font-weight: 600; color: #171717;">$200 span</span></div><div style="border: 1px solid #E2E2E2; border-radius: 4px; padding: 6px 8px;"><span class="d" style="display: block; font-weight: 600; font-size: 11px; line-height: 1; color: #545454;">Wide</span><span class="m t" style="display: block; margin-top: 4px; font-size: 9px; color: #6B6B6B;">$400 span</span></div></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 40px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #EEEEEE;">
+        <div>
+          <span class="m" style="display: block; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">Range center</span>
+          <span class="m t" style="display: block; margin-top: 2px; font-size: 10px; color: #545454;">$76,210 · $30 below spot</span>
+        </div>
+        <div style="display: flex; gap: 4px;"><span style="width: 32px; height: 32px; border: 1px solid #E2E2E2; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #545454;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg></span><span style="width: 32px; height: 32px; border: 1px solid #E2E2E2; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #545454;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg></span><span style="width: 32px; height: 32px; border: 1px solid #E2E2E2; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #545454;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span></div>
+      </div>
+    </div>
+    <div style="border-top: 1px solid #EEEEEE; border-bottom: 1px solid #EEEEEE; padding: 12px 0; margin-bottom: 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <span class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">Bet amount</span>
+      <span class="m" style="font-size: 9px; color: #6B6B6B;">Balance 248.00</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span class="d t" style="flex: 1; font-weight: 700; font-size: 28px; line-height: 1; color: #000000;">25.00</span>
+      <span class="m" style="font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B6B6B;">MUSD</span>
+    </div>
+    <div style="display: flex; gap: 4px; margin-top: 10px;"><span class="m" style="min-width: 40px; text-align: center; padding: 4px 8px; border: 1px solid #E2E2E2; border-radius: 4px; font-size: 9px; color: #545454;">+1</span><span class="m" style="min-width: 40px; text-align: center; padding: 4px 8px; border: 1px solid #E2E2E2; border-radius: 4px; font-size: 9px; color: #545454;">+5</span><span class="m" style="min-width: 40px; text-align: center; padding: 4px 8px; border: 1px solid #E2E2E2; border-radius: 4px; font-size: 9px; color: #545454;">+20</span></div>
+  </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid #EEEEEE; margin-bottom: 8px;"><div style="padding: 10px 10px 10px 0;"><span class="m" style="display: block; margin-bottom: 4px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B6B6B;">Position</span><span class="m t" style="display: block; font-size: 13px; font-weight: 500; color: #171717;">24.75</span></div><div style="padding: 10px; border-left: 1px solid #EEEEEE; box-shadow: inset 0 2px 0 #FF004D;"><span class="m" style="display: block; margin-bottom: 4px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B6B6B;">Return</span><span class="m t" style="display: block; font-size: 13px; font-weight: 700; color: #171717;">95.20</span></div><div style="padding: 10px 0 10px 10px; border-left: 1px solid #EEEEEE;"><span class="m" style="display: block; margin-bottom: 4px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B6B6B;">Max loss</span><span class="m t" style="display: block; font-size: 13px; font-weight: 500; color: #171717;">25.00</span></div></div>
+    <div class="m" style="display: flex; justify-content: space-between; padding-bottom: 8px; margin-bottom: 10px; border-bottom: 1px solid #EEEEEE; font-size: 9px; color: #6B6B6B;">
+    <span>Yosuku fee · 1% <span class="t" style="color: #171717;">+0.25</span></span>
+    <span>Total <span class="t" style="color: #171717;">25.00 MUSD</span></span>
+  </div>
+  <div class="m" style="display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 9px; color: #6B6B6B;">
+    <span>Live market odds</span>
+    <span style="color: #171717;">26% chance</span>
+  </div>
+    <div style="background: #FF004D; color: #000000; border-radius: 4px; padding: 13px 12px; text-align: center; font-size: 13px; font-weight: 600;">Place RANGE $76,110 to $76,310 · 25.00 total →</div>
+    <p class="m" style="margin: 10px 0 0; font-size: 9px; line-height: 1.6; color: #6B6B6B;">Gas is paid in BTC, a few cents. Settles on its own at the Mezo oracle price.</p>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

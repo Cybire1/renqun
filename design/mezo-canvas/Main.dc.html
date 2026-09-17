@@ -1,0 +1,395 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600;700&amp;family=Sora:wght@600;700;800&amp;display=swap">
+  <style>
+    body { margin: 0; background: #F4F0ED; color: #171717; font-family: Inter, -apple-system, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    a { color: #171717; font-weight: 600; text-decoration: underline; text-decoration-color: #FF004D; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+    a:hover { color: #000000; text-decoration-color: #D10069; }
+    .d { font-family: Sora, "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+    .m { font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; }
+    .t { font-variant-numeric: tabular-nums; }
+    .tap { cursor: pointer; user-select: none; transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.08s ease; }
+    .tap:active { transform: scale(0.98); }
+    .chip:hover { border-color: #171717 !important; }
+    .side:hover { box-shadow: 0 6px 14px -8px rgba(0,0,0,0.35); }
+    .cta:hover { filter: brightness(0.95); }
+  </style>
+</helmet>
+<div style="width: 1440px; min-height: 1020px; background: #F4F0ED;">
+<div style="height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; background: rgba(255,255,255,0.78); border-bottom: 1px solid #E2E2E2;">
+  <div style="display: flex; align-items: center; gap: 40px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <svg width="17.35" height="21" viewBox="0 0 266 322" fill="none" aria-hidden="true"><g stroke="#171717" stroke-linecap="round"><line x1="12" y1="15" x2="88" y2="94" stroke-width="24"></line><line x1="254" y1="15" x2="178" y2="94" stroke-width="24"></line><line x1="132.5" y1="13" x2="132.5" y2="86" stroke-width="14"></line><line x1="132.5" y1="250" x2="132.5" y2="306" stroke-width="14"></line></g><rect x="99" y="78" width="67" height="166" rx="16" fill="#171717"></rect><circle cx="132.5" cy="239" r="11" fill="#FF004D"></circle></svg>
+      <span class="d" style="font-weight: 800; font-size: 15px; letter-spacing: 0.18em; color: #000000;">YOSUKU</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 24px;">
+      <span style="font-size: 13px; font-weight: 500; color: #171717; padding: 6px 0; border-bottom: 1px solid #171717;">Markets</span><span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Reels</span><span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Create</span><span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Strategies<sup class="m" style="font-size: 7.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6B6B6B; margin-left: 3px;">beta</sup></span><span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Leaderboard</span><span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Portfolio</span><span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Earn</span>
+    </div>
+  </div>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <div style="display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border: 1px solid #E2E2E2; border-radius: 999px; background: #FFFFFF;">
+      <svg width="22" height="6.16" viewBox="0 0 2021 566" aria-hidden="true"><path d="M476.6 483.672L674.294 283.413V282.523L871.047 482.782C927.908 540.38 997.446 566 1066.04 566C1209.58 566 1347.65 452.647 1347.65 282.523L1544.4 482.782C1601.26 540.38 1670.8 566 1739.4 566C1882.93 566 2021 452.647 2021 282.523H1852.18L1655.42 83.2185C1598.56 25.6204 1528.15 0 1459.55 0C1316.02 0 1178.82 112.463 1178.82 282.523L982.07 83.2185C925.209 25.6204 854.792 0 786.196 0C642.663 0 505.47 112.463 505.47 282.523L0 283.413C0 454.428 139.892 565.046 283.425 565.046C352.021 565.046 421.559 539.426 476.6 483.672Z" fill="#FF004D"></path></svg>
+      <span class="m" style="font-size: 11px; color: #545454;">Mezo Testnet</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border: 1px solid #E2E2E2; border-radius: 999px; background: #FFFFFF;">
+      <span class="m t" style="font-size: 12px; font-weight: 600; color: #171717;">248.00</span>
+      <span class="m" style="font-size: 12px; color: #6B6B6B;">MUSD</span>
+      <span style="color: #FF004D; font-weight: 700; font-size: 15px; line-height: 1; margin-left: 2px;">+</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px 0 12px; border: 1px solid #E2E2E2; border-radius: 999px; background: #FFFFFF;">
+      <span style="width: 8px; height: 8px; border-radius: 999px; background: #06C167;"></span>
+      <span class="m" style="font-size: 12px; color: #171717;">0x69e3…2034</span>
+    </div>
+  </div>
+</div>
+<div style="width: 1280px; margin: 0 auto; padding: 28px 0 40px; display: flex; flex-direction: column; gap: 28px;">
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 24px; align-items: start;">
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E2E2; border-radius: 12px; overflow: hidden;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; padding: 24px 24px 8px;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="width: 28px; height: 28px; flex-shrink: 0; border-radius: 999px; background: #F7931A; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; line-height: 1;">₿</span>
+            <span class="m" style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #171717;">BTC</span>
+            <div style="display: flex; align-items: baseline; gap: 12px; margin-left: 6px;">
+              <span class="m" style="padding-bottom: 4px; border-bottom: 2px solid #FF004D; font-size: 9px; font-weight: 600; letter-spacing: 0.14em; color: #171717;">5 MIN</span>
+              <span class="m" style="padding-bottom: 4px; border-bottom: 1px solid transparent; font-size: 9px; letter-spacing: 0.14em; color: #6B6B6B;">1 HOUR</span>
+            </div>
+          </div>
+          <h1 class="d" style="margin: 0; font-weight: 800; font-size: 36px; letter-spacing: -0.02em; line-height: 1.05; color: #000000;">BTC holds above <span style="color: #FF004D;">$76,210</span>?</h1>
+          <div class="m" style="font-size: 15px; font-weight: 600; color: #03703C;">$30 above the UP line</div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+          <span class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">Settles in</span>
+          <span class="m t" style="font-size: 30px; font-weight: 600; line-height: 1; color: #171717;">03:42</span>
+          <span class="m" style="font-size: 9px; color: #6B6B6B;">14:10 UTC</span>
+        </div>
+      </div>
+      <div style="padding: 8px 24px 0;">
+        <svg width="808" height="300" viewBox="0 0 808 300" aria-label="BTC price, last 5 minutes">
+      <defs>
+        <linearGradient id="deskArea" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#171717" stop-opacity="0.08"></stop>
+          <stop offset="1" stop-color="#171717" stop-opacity="0"></stop>
+        </linearGradient>
+      </defs>
+      <rect x="640" y="0" width="168" height="276" fill="#F6F6F6"></rect>
+      <line x1="0" y1="52" x2="808" y2="52" stroke="#EEEEEE" stroke-width="1"></line><line x1="0" y1="108" x2="808" y2="108" stroke="#EEEEEE" stroke-width="1"></line><line x1="0" y1="164" x2="808" y2="164" stroke="#EEEEEE" stroke-width="1"></line><line x1="0" y1="220" x2="808" y2="220" stroke="#EEEEEE" stroke-width="1"></line><line x1="0" y1="276" x2="808" y2="276" stroke="#EEEEEE" stroke-width="1"></line>
+      <path d="M0.0 208.8 L6.7 211.0 L13.5 203.4 L20.2 205.2 L26.9 208.2 L33.7 218.8 L40.4 220.2 L47.2 205.0 L53.9 198.5 L60.6 184.4 L67.4 180.4 L74.1 174.6 L80.8 171.4 L87.6 191.7 L94.3 179.9 L101.1 172.6 L107.8 165.5 L114.5 186.1 L121.3 207.1 L128.0 217.0 L134.7 221.4 L141.5 216.1 L148.2 215.2 L154.9 207.2 L161.7 213.9 L168.4 208.5 L175.2 202.1 L181.9 209.1 L188.6 185.9 L195.4 177.8 L202.1 161.6 L208.8 168.6 L215.6 177.0 L222.3 180.2 L229.1 180.4 L235.8 171.3 L242.5 167.1 L249.3 171.7 L256.0 182.7 L262.7 187.9 L269.5 171.1 L276.2 180.1 L282.9 175.7 L289.7 169.1 L296.4 186.7 L303.2 184.5 L309.9 166.5 L316.6 190.7 L323.4 193.0 L330.1 192.6 L336.8 201.0 L343.6 192.7 L350.3 191.5 L357.1 208.1 L363.8 195.2 L370.5 184.7 L377.3 170.8 L384.0 151.1 L390.7 145.4 L397.5 142.9 L404.2 158.3 L410.9 149.1 L417.7 155.6 L424.4 159.8 L431.2 174.2 L437.9 184.2 L444.6 188.4 L451.4 169.4 L458.1 192.8 L464.8 208.0 L471.6 201.1 L478.3 179.2 L485.1 169.0 L491.8 190.3 L498.5 218.2 L505.3 208.5 L512.0 212.7 L518.7 221.3 L525.5 202.7 L532.2 183.3 L538.9 176.6 L545.7 168.9 L552.4 159.1 L559.2 135.1 L565.9 125.0 L572.6 116.9 L579.4 109.1 L586.1 128.8 L592.8 110.0 L599.6 97.7 L606.3 92.7 L613.1 120.7 L619.8 125.5 L626.5 109.0 L633.3 131.3 L640.0 108.0 L640 276 L0 276 Z" fill="url(#deskArea)"></path>
+      <path d="M0.0 208.8 L6.7 211.0 L13.5 203.4 L20.2 205.2 L26.9 208.2 L33.7 218.8 L40.4 220.2 L47.2 205.0 L53.9 198.5 L60.6 184.4 L67.4 180.4 L74.1 174.6 L80.8 171.4 L87.6 191.7 L94.3 179.9 L101.1 172.6 L107.8 165.5 L114.5 186.1 L121.3 207.1 L128.0 217.0 L134.7 221.4 L141.5 216.1 L148.2 215.2 L154.9 207.2 L161.7 213.9 L168.4 208.5 L175.2 202.1 L181.9 209.1 L188.6 185.9 L195.4 177.8 L202.1 161.6 L208.8 168.6 L215.6 177.0 L222.3 180.2 L229.1 180.4 L235.8 171.3 L242.5 167.1 L249.3 171.7 L256.0 182.7 L262.7 187.9 L269.5 171.1 L276.2 180.1 L282.9 175.7 L289.7 169.1 L296.4 186.7 L303.2 184.5 L309.9 166.5 L316.6 190.7 L323.4 193.0 L330.1 192.6 L336.8 201.0 L343.6 192.7 L350.3 191.5 L357.1 208.1 L363.8 195.2 L370.5 184.7 L377.3 170.8 L384.0 151.1 L390.7 145.4 L397.5 142.9 L404.2 158.3 L410.9 149.1 L417.7 155.6 L424.4 159.8 L431.2 174.2 L437.9 184.2 L444.6 188.4 L451.4 169.4 L458.1 192.8 L464.8 208.0 L471.6 201.1 L478.3 179.2 L485.1 169.0 L491.8 190.3 L498.5 218.2 L505.3 208.5 L512.0 212.7 L518.7 221.3 L525.5 202.7 L532.2 183.3 L538.9 176.6 L545.7 168.9 L552.4 159.1 L559.2 135.1 L565.9 125.0 L572.6 116.9 L579.4 109.1 L586.1 128.8 L592.8 110.0 L599.6 97.7 L606.3 92.7 L613.1 120.7 L619.8 125.5 L626.5 109.0 L633.3 131.3 L640.0 108.0" fill="none" stroke="#171717" stroke-width="1.75" stroke-linejoin="round"></path>
+      <g opacity="{{band.opacity}}"><rect x="0" y="{{band.top}}" width="808" height="{{band.height}}" fill="rgba(255,0,77,0.08)"></rect><line x1="0" y1="{{band.top}}" x2="808" y2="{{band.top}}" stroke="#FF004D" stroke-width="1.25"></line><line x1="0" y1="{{band.bottom}}" x2="808" y2="{{band.bottom}}" stroke="#FF004D" stroke-width="1.25"></line><rect x="696" y="{{band.hiPill}}" width="108" height="22" rx="4" fill="#FF004D"></rect><text x="750" y="{{band.hiText}}" text-anchor="middle" font-family="JetBrains Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#000000">{{band.hiLabel}}</text><rect x="696" y="{{band.loPill}}" width="108" height="22" rx="4" fill="#FF004D"></rect><text x="750" y="{{band.loText}}" text-anchor="middle" font-family="JetBrains Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#000000">{{band.loLabel}}</text></g>
+      <line x1="0" y1="150.0" x2="808" y2="150.0" stroke="#FF004D" stroke-width="1.25" stroke-dasharray="5 4" opacity="{{chart.upLine}}"></line>
+      <line x1="640" y1="0" x2="640" y2="276" stroke="#CBCBCB" stroke-width="1" stroke-dasharray="2 3"></line>
+      <g opacity="{{chart.upPill}}">
+        <rect x="696" y="139.0" width="108" height="22" rx="4" fill="#FF004D"></rect>
+        <text x="750" y="154.0" text-anchor="middle" font-family="JetBrains Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#000000">UP LINE $76,210</text>
+      </g>
+      <circle cx="640" cy="108.0" r="4.5" fill="#171717" stroke="#FFFFFF" stroke-width="2"></circle>
+      <rect x="652" y="97.0" width="72" height="22" rx="4" fill="#171717"></rect>
+      <text x="688" y="112.0" text-anchor="middle" font-family="JetBrains Mono, Menlo, monospace" font-size="11" font-weight="600" fill="#FFFFFF">$76,240</text>
+      <text x="0" y="294" font-family="JetBrains Mono, Menlo, monospace" font-size="10" fill="#6B6B6B">14:01</text>
+      <text x="320" y="294" text-anchor="middle" font-family="JetBrains Mono, Menlo, monospace" font-size="10" fill="#6B6B6B">14:04</text>
+      <text x="640" y="294" text-anchor="middle" font-family="JetBrains Mono, Menlo, monospace" font-size="10" fill="#171717">now</text>
+      <text x="808" y="294" text-anchor="end" font-family="JetBrains Mono, Menlo, monospace" font-size="10" fill="#6B6B6B">14:10 settles</text>
+    </svg>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding: 12px 24px 16px; border-top: 1px solid #EEEEEE;">
+        <span class="m" style="display: flex; align-items: center; gap: 6px; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #545454;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"></path></svg>The Room <span style="color: #6B6B6B;">bettors only</span></span>
+        <span class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">Settles at the Mezo oracle price</span>
+      </div>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E2E2; border-radius: 8px; padding: 20px;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+    <span class="m" style="width: 36px; height: 36px; flex-shrink: 0; border-radius: 999px; border: 1px solid #E2E2E2; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #171717;">₿</span>
+    <div>
+      <div class="d" style="font-weight: 800; font-size: 20px; line-height: 1.1; color: #000000;">BTC · 5 minutes</div>
+      <div class="m" style="margin-top: 4px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">settles in <span class="t" style="color: #171717;">03:42</span> · BTC $76,240</div>
+    </div>
+  </div>
+      <div style="display: flex; gap: 4px; padding: 4px; margin-bottom: 12px; border: 1px solid #EEEEEE; background: #F6F6F6; border-radius: 6px;">
+        <div class="m tap" onClick="{{pickDirection}}" style="flex: 1; text-align: center; padding: 8px 0; border-radius: 4px; background: {{seg.direction.bg}}; box-shadow: {{seg.direction.shadow}}; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: {{seg.direction.color}};">Direction</div>
+        <div class="m tap" onClick="{{pickRange}}" style="flex: 1; text-align: center; padding: 8px 0; border-radius: 4px; background: {{seg.range.bg}}; box-shadow: {{seg.range.shadow}}; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: {{seg.range.color}};">Range</div>
+      </div>
+      <div style="height: 108px; margin-bottom: 16px;">
+        <sc-if value="{{isDirection}}" hint-placeholder-val="{{true}}">
+          <div style="height: 108px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="height: 74px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+          <div class="tap side" onClick="{{pickUp}}" style="border: 1px solid {{up.border}}; background: {{up.bg}}; color: {{up.color}}; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px;"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2 L11 10 H1 Z" fill="currentColor"></path></svg><span class="d" style="font-weight: 700; font-size: 16px; line-height: 1;">UP</span></div>
+            <span class="m t" style="font-size: 10px; color: {{up.sub}};">{{up.pays}}</span>
+          </div>
+          <div class="tap side" onClick="{{pickDown}}" style="border: 1px solid {{down.border}}; background: {{down.bg}}; color: {{down.color}}; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px;"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10 L1 2 H11 Z" fill="currentColor"></path></svg><span class="d" style="font-weight: 700; font-size: 16px; line-height: 1;">DOWN</span></div>
+            <span class="m t" style="font-size: 10px; color: {{down.sub}};">{{down.pays}}</span>
+          </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; gap: 2px; height: 4px;"><span style="width: 65%; border-radius: 999px; background: #06C167;"></span><span style="flex: 1; border-radius: 999px; background: #171717;"></span></div>
+              <div class="m" style="display: flex; justify-content: space-between; font-size: 9px; color: #6B6B6B;"><span>UP <span class="t" style="color: #171717;">65%</span></span><span>chance at the oracle price now</span><span><span class="t" style="color: #171717;">35%</span> DOWN</span></div>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{isRange}}" hint-placeholder-val="{{false}}">
+          <div style="height: 108px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="height: 52px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;">
+              <sc-for list="{{presets}}" as="preset" hint-placeholder-count="3">
+                <div class="tap side" onClick="{{preset.pick}}" style="border: 1px solid {{preset.border}}; background: {{preset.bg}}; border-radius: 4px; padding: 8px; display: flex; flex-direction: column; justify-content: center; gap: 5px;">
+                  <span class="d" style="font-weight: 600; font-size: 12px; line-height: 1; color: #171717;">{{preset.name}}</span>
+                  <span class="m t" style="font-size: 9px; font-weight: {{preset.weight}}; color: {{preset.sub}};">{{preset.detail}}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="height: 46px; display: flex; align-items: center; gap: 12px;">
+              <div style="width: 76px;">
+                <span class="m" style="display: block; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">From</span>
+                <strong class="m t" style="display: block; margin-top: 3px; font-size: 13px; font-weight: 700; color: #171717;">{{range.from}}</strong>
+              </div>
+              <div style="position: relative; flex: 1; height: 24px;">
+                <div style="position: absolute; left: 0; right: 0; top: 11px; height: 2px; border-radius: 999px; background: #EEEEEE;"></div>
+                <div style="position: absolute; left: {{range.left}}; width: {{range.width}}; top: 7px; height: 10px; border-radius: 2px; background: rgba(255,0,77,0.18); border-left: 2px solid #FF004D; border-right: 2px solid #FF004D; transition: left 0.2s ease, width 0.2s ease;"></div>
+                <div style="position: absolute; left: 50%; top: 4px; width: 2px; height: 16px; margin-left: -1px; border-radius: 1px; background: #171717;"></div>
+              </div>
+              <div style="width: 76px; text-align: right;">
+                <span class="m" style="display: block; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">To</span>
+                <strong class="m t" style="display: block; margin-top: 3px; font-size: 13px; font-weight: 700; color: #171717;">{{range.to}}</strong>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      <div style="border-top: 1px solid #EEEEEE; border-bottom: 1px solid #EEEEEE; padding: 12px 0; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">Bet amount</span>
+          <span class="m t" style="font-size: 9px; color: {{balanceColor}};">Balance 248.00</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="d t" style="flex: 1; font-weight: 700; font-size: 28px; line-height: 1; color: {{stakeColor}};">{{stakeText}}</span>
+          <span class="m" style="font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B6B6B;">MUSD</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 4px; margin-top: 10px;">
+          <sc-for list="{{chips}}" as="chip" hint-placeholder-count="4">
+            <span class="m t tap chip" onClick="{{chip.add}}" style="min-width: 44px; height: 28px; padding: 0 8px; border: 1px solid #E2E2E2; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #171717;">{{chip.label}}</span>
+          </sc-for>
+          <span style="flex: 1;"></span>
+          <span class="m tap" onClick="{{clearStake}}" style="height: 28px; padding: 0 4px; display: flex; align-items: center; gap: 4px; font-size: 10px; color: #545454;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>Clear</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid #EEEEEE; margin-bottom: 8px;">
+        <div style="padding: 10px 10px 10px 0;">
+          <span class="m" style="display: block; margin-bottom: 4px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B6B6B;">Position</span>
+          <span class="m t" style="display: block; font-size: 13px; font-weight: 500; color: #171717;">{{q.position}}</span>
+        </div>
+        <div style="padding: 10px; border-left: 1px solid #EEEEEE; box-shadow: inset 0 2px 0 #FF004D;">
+          <span class="m" style="display: block; margin-bottom: 4px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B6B6B;">Return</span>
+          <span class="m t" style="display: block; font-size: 13px; font-weight: 700; color: #171717;">{{q.ret}}</span>
+        </div>
+        <div style="padding: 10px 0 10px 10px; border-left: 1px solid #EEEEEE;">
+          <span class="m" style="display: block; margin-bottom: 4px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B6B6B;">Max loss</span>
+          <span class="m t" style="display: block; font-size: 13px; font-weight: 500; color: #171717;">{{q.maxLoss}}</span>
+        </div>
+      </div>
+      <div class="m" style="display: flex; justify-content: space-between; padding-bottom: 8px; margin-bottom: 10px; border-bottom: 1px solid #EEEEEE; font-size: 9px; color: #6B6B6B;">
+        <span>Yosuku fee · 1% <span class="t" style="color: #171717;">+{{q.fee}}</span></span>
+        <span>Total <span class="t" style="color: #171717;">{{q.total}} MUSD</span></span>
+      </div>
+      <div class="m" style="display: flex; justify-content: space-between; gap: 12px; margin-bottom: 14px; font-size: 9px; color: #6B6B6B;">
+        <span>{{q.rule}}</span>
+        <span class="t" style="flex-shrink: 0; color: #171717;">{{q.chance}} chance</span>
+      </div>
+      <sc-if value="{{notPlaced}}" hint-placeholder-val="{{true}}">
+        <div class="tap cta" onClick="{{place}}" style="height: 44px; border-radius: 4px; background: {{cta.bg}}; color: {{cta.color}}; cursor: {{cta.cursor}}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600;">{{cta.label}}</div>
+      </sc-if>
+      <sc-if value="{{placed}}" hint-placeholder-val="{{false}}">
+        <div style="height: 44px; border-radius: 4px; border: 1px solid #06C167; background: rgba(6,193,103,0.10); padding: 0 12px; display: flex; align-items: center; gap: 10px;">
+          <span style="width: 22px; height: 22px; flex-shrink: 0; border-radius: 999px; background: #06C167; color: #0B0B0B; display: flex; align-items: center; justify-content: center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+          <span style="flex: 1; min-width: 0; font-size: 13px; font-weight: 600; color: #171717; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{done.title}}</span>
+          <span class="tap" onClick="{{again}}" style="flex-shrink: 0; font-size: 12px; font-weight: 600; color: #171717; text-decoration: underline; text-decoration-color: #FF004D; text-decoration-thickness: 2px; text-underline-offset: 4px;">Bet again</span>
+        </div>
+      </sc-if>
+      <p class="m" style="margin: 10px 0 0; font-size: 9px; line-height: 1.6; color: #6B6B6B;">Gas is paid in BTC, a few cents. Settles on its own at the Mezo oracle price.</p>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+      <span class="d" style="font-weight: 700; font-size: 18px; color: #000000;">Up next</span>
+      <span class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">New rounds every 5 minutes and every hour</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;">
+      <div style="background: #FFFFFF; border: 1px solid #E2E2E2; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="m" style="font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">BTC · 5 min</span>
+        <span class="m t" style="font-size: 12px; color: #171717;">08:42</span>
+      </div>
+      <div class="d" style="font-weight: 700; font-size: 17px; line-height: 1.3; color: #000000;">Above <span style="text-decoration: underline; text-decoration-color: #FF004D; text-decoration-thickness: 2px; text-underline-offset: 3px;">$76,240</span> at 14:15?</div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+        <div style="border: 1px solid #E2E2E2; border-radius: 6px; padding: 9px 10px; display: flex; justify-content: space-between; align-items: center;">
+          <span class="d" style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13px; color: #03703C;"><svg width="9" height="9" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2 L11 10 H1 Z" fill="currentColor"></path></svg>UP</span>
+          <span class="m t" style="font-size: 12px; color: #171717;">49%</span>
+        </div>
+        <div style="border: 1px solid #E2E2E2; border-radius: 6px; padding: 9px 10px; display: flex; justify-content: space-between; align-items: center;">
+          <span class="d" style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13px; color: #171717;"><svg width="9" height="9" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10 L1 2 H11 Z" fill="currentColor"></path></svg>DOWN</span>
+          <span class="m t" style="font-size: 12px; color: #171717;">51%</span>
+        </div>
+      </div>
+    </div>
+      <div style="background: #FFFFFF; border: 1px solid #E2E2E2; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="m" style="font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">BTC · 1 hour</span>
+        <span class="m t" style="font-size: 12px; color: #171717;">53:42</span>
+      </div>
+      <div class="d" style="font-weight: 700; font-size: 17px; line-height: 1.3; color: #000000;">Above <span style="text-decoration: underline; text-decoration-color: #FF004D; text-decoration-thickness: 2px; text-underline-offset: 3px;">$76,225</span> at 15:00?</div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+        <div style="border: 1px solid #E2E2E2; border-radius: 6px; padding: 9px 10px; display: flex; justify-content: space-between; align-items: center;">
+          <span class="d" style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13px; color: #03703C;"><svg width="9" height="9" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2 L11 10 H1 Z" fill="currentColor"></path></svg>UP</span>
+          <span class="m t" style="font-size: 12px; color: #171717;">52%</span>
+        </div>
+        <div style="border: 1px solid #E2E2E2; border-radius: 6px; padding: 9px 10px; display: flex; justify-content: space-between; align-items: center;">
+          <span class="d" style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13px; color: #171717;"><svg width="9" height="9" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10 L1 2 H11 Z" fill="currentColor"></path></svg>DOWN</span>
+          <span class="m t" style="font-size: 12px; color: #171717;">48%</span>
+        </div>
+      </div>
+    </div>
+      <div style="background: #FFFFFF; border: 1px solid #E2E2E2; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="m" style="font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">BTC · 5 min</span>
+        <span class="m t" style="font-size: 12px; color: #AFAFAF;">opens 14:10</span>
+      </div>
+      <div class="d" style="font-weight: 700; font-size: 17px; line-height: 1.3; color: #AFAFAF;">The 14:20 round opens when 14:10 settles</div>
+      <div><div style="border: 1px solid #EEEEEE; background: #F6F6F6; border-radius: 6px; padding: 9px 10px; text-align: center;"><span class="m" style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #AFAFAF;">Between rounds</span></div></div>
+    </div>
+    </div>
+  </div>
+</div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"side":{"editor":"enum","options":["up","down"],"default":"up","tsType":"\"up\" | \"down\""},"mode":{"editor":"enum","options":["direction","range"],"default":"direction","tsType":"\"direction\" | \"range\""}}'>
+// Sample market: BTC 5-minute round, spot $76,240, UP line $76,210, sigma to settle $78.6.
+// Chances are the model's N(d2) values; every bet pays 1 MUSD per contract, fee 1% on top.
+const SPOT = 76240, STRIKE = 76210, BALANCE = 248, FEE = 0.01;
+const PRESETS = [
+  { id: 'tight', name: 'Tight', half: 20, p: 0.20 },
+  { id: 'normal', name: 'Normal', half: 40, p: 0.39 },
+  { id: 'wide', name: 'Wide', half: 80, p: 0.69 },
+];
+const CHIPS = [['+1', 1], ['+5', 5], ['+20', 20], ['Max', 'max']];
+const money = (n) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const usd = (n) => '$' + n.toLocaleString('en-US');
+const pays = (p) => (1 / (p * (1 + FEE))).toFixed(2) + '×';
+const chartY = (price) => 150 - (price - STRIKE) * 1.4;   // same scale as the drawn path
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+class Component extends DCLogic {
+  state = { side: null, mode: null, preset: 'normal', stake: 50, placed: false };
+
+  choose(patch) { this.setState({ ...patch, placed: false }); }
+
+  renderVals() {
+    const side = this.state.side ?? this.props.side ?? 'up';
+    const mode = this.state.mode ?? this.props.mode ?? 'direction';
+    const { stake, placed } = this.state;
+    const isRange = mode === 'range';
+    const preset = PRESETS.find((x) => x.id === this.state.preset) ?? PRESETS[1];
+    const lo = SPOT - preset.half, hi = SPOT + preset.half;
+    const p = isRange ? preset.p : side === 'up' ? 0.65 : 0.35;
+
+    const on = { bg: '#FFFFFF', shadow: '0 1px 2px rgba(0,0,0,0.08)', color: '#171717' };
+    const offSeg = { bg: 'transparent', shadow: 'none', color: '#6B6B6B' };
+    const idle = { border: '#E2E2E2', bg: '#FFFFFF', color: '#545454', sub: '#6B6B6B' };
+    const up = side === 'up'
+      ? { border: '#06C167', bg: 'rgba(6,193,103,0.10)', color: '#03703C', sub: '#03703C' } : idle;
+    const down = side === 'down'
+      ? { border: '#171717', bg: 'rgba(23,23,23,0.06)', color: '#171717', sub: '#171717' } : idle;
+    up.pays = 'pays ' + pays(0.65);
+    down.pays = 'pays ' + pays(0.35);
+
+    const presets = PRESETS.map((x) => {
+      const picked = x.id === preset.id;
+      return {
+        name: x.name,
+        detail: '$' + x.half * 2 + ' · ' + pays(x.p),
+        border: picked ? '#FF004D' : '#E2E2E2',
+        bg: picked ? 'rgba(255,0,77,0.06)' : '#FFFFFF',
+        sub: picked ? '#171717' : '#6B6B6B',
+        weight: picked ? 600 : 400,
+        pick: () => this.choose({ preset: x.id }),
+      };
+    });
+
+    const view = 200;   // the mini track spans spot +/- $200
+    const range = {
+      from: usd(lo), to: usd(hi),
+      left: (50 - (preset.half / view) * 50) + '%',
+      width: (preset.half / view) * 100 + '%',
+    };
+
+    const top = clamp(chartY(hi), 0, 276), bottom = clamp(chartY(lo), 0, 276);
+    const band = {
+      opacity: isRange ? 1 : 0,
+      top, bottom, height: bottom - top,
+      hiPill: clamp(top - 11, 2, 250), hiText: clamp(top - 11, 2, 250) + 15, hiLabel: 'TO ' + usd(hi),
+      loPill: clamp(bottom - 11, 2, 250), loText: clamp(bottom - 11, 2, 250) + 15, loLabel: 'FROM ' + usd(lo),
+    };
+    const chart = { upLine: isRange ? 0.25 : 1, upPill: isRange ? 0 : 1 };
+
+    const chips = CHIPS.map(([label, amt]) => ({
+      label,
+      add: () => this.choose({ stake: amt === 'max' ? BALANCE : Math.round((stake + amt) * 100) / 100 }),
+    }));
+
+    const tooMuch = stake > BALANCE;
+    const q = {
+      position: money(stake / (1 + FEE)),
+      ret: money(stake / (p * (1 + FEE))),
+      maxLoss: money(stake),
+      fee: money(stake - stake / (1 + FEE)),
+      total: money(stake),
+      chance: Math.round(p * 100) + '%',
+      rule: isRange
+        ? 'Wins above ' + usd(lo) + ', up to ' + usd(hi) + ' at 14:10'
+        : side === 'up'
+          ? 'Wins if BTC is above ' + usd(STRIKE) + ' at 14:10'
+          : 'Wins if BTC is at or below ' + usd(STRIKE) + ' at 14:10',
+    };
+
+    const muted = { bg: '#EEEEEE', color: '#6B6B6B', cursor: 'default' };
+    let cta;
+    if (stake <= 0) cta = { ...muted, label: 'Enter an amount' };
+    else if (tooMuch) cta = { ...muted, label: 'Not enough MUSD · add funds' };
+    else if (isRange) cta = { bg: '#FF004D', color: '#000000', cursor: 'pointer', label: 'Place RANGE ' + usd(lo) + ' to ' + usd(hi) + ' · ' + money(stake) + ' →' };
+    else if (side === 'up') cta = { bg: '#06C167', color: '#0B0B0B', cursor: 'pointer', label: 'Bet UP · ' + money(stake) + ' total →' };
+    else cta = { bg: '#171717', color: '#FFFFFF', cursor: 'pointer', label: 'Bet DOWN · ' + money(stake) + ' total →' };
+
+    const what = isRange ? 'RANGE' : side.toUpperCase();
+    const done = { title: what + ' placed · pays ' + q.ret };
+
+    return {
+      seg: { direction: isRange ? offSeg : on, range: isRange ? on : offSeg },
+      isDirection: !isRange, isRange,
+      up, down, presets, range, band, chart, chips, q, cta, done,
+      placed, notPlaced: !placed,
+      stakeText: money(stake),
+      stakeColor: tooMuch ? '#6B6B6B' : '#000000',
+      balanceColor: tooMuch ? '#171717' : '#6B6B6B',
+      pickDirection: () => this.choose({ mode: 'direction' }),
+      pickRange: () => this.choose({ mode: 'range' }),
+      pickUp: () => this.choose({ side: 'up', mode: 'direction' }),
+      pickDown: () => this.choose({ side: 'down', mode: 'direction' }),
+      clearStake: () => this.choose({ stake: 0 }),
+      place: () => { if (stake > 0 && !tooMuch) this.setState({ placed: true }); },
+      again: () => this.setState({ placed: false }),
+    };
+  }
+}
+</script>
+</body>
+</html>

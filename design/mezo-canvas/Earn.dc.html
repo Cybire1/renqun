@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600;700&amp;family=Sora:wght@600;700;800&amp;display=swap">
+  <style>
+    body { margin: 0; background: #F4F0ED; color: #171717; font-family: Inter, -apple-system, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    a { color: #171717; font-weight: 600; text-decoration: underline; text-decoration-color: #FF004D; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+    a:hover { color: #000000; text-decoration-color: #D10069; }
+    .d { font-family: Sora, "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+    .m { font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; }
+    .t { font-variant-numeric: tabular-nums; }
+  </style>
+</helmet>
+<div style="width: 1440px; min-height: 960px; background: #F4F0ED;">
+<div style="height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; background: rgba(255,255,255,0.78); border-bottom: 1px solid #E2E2E2;">
+  <div style="display: flex; align-items: center; gap: 40px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <svg width="17.35" height="21" viewBox="0 0 266 322" fill="none" aria-hidden="true"><g stroke="#171717" stroke-linecap="round"><line x1="12" y1="15" x2="88" y2="94" stroke-width="24"></line><line x1="254" y1="15" x2="178" y2="94" stroke-width="24"></line><line x1="132.5" y1="13" x2="132.5" y2="86" stroke-width="14"></line><line x1="132.5" y1="250" x2="132.5" y2="306" stroke-width="14"></line></g><rect x="99" y="78" width="67" height="166" rx="16" fill="#171717"></rect><circle cx="132.5" cy="239" r="11" fill="#FF004D"></circle></svg>
+      <span class="d" style="font-weight: 800; font-size: 15px; letter-spacing: 0.18em; color: #000000;">YOSUKU</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 24px;">
+      <span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Markets</span><span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Reels</span><span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Create</span><span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Strategies<sup class="m" style="font-size: 7.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #6B6B6B; margin-left: 3px;">beta</sup></span><span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Leaderboard</span><span style="font-size: 13px; font-weight: 500; color: #6B6B6B; padding: 6px 0; border-bottom: 1px solid transparent;">Portfolio</span><span style="font-size: 13px; font-weight: 500; color: #171717; padding: 6px 0; border-bottom: 1px solid #171717;">Earn</span>
+    </div>
+  </div>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <div style="display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border: 1px solid #E2E2E2; border-radius: 999px; background: #FFFFFF;">
+      <svg width="22" height="6.16" viewBox="0 0 2021 566" aria-hidden="true"><path d="M476.6 483.672L674.294 283.413V282.523L871.047 482.782C927.908 540.38 997.446 566 1066.04 566C1209.58 566 1347.65 452.647 1347.65 282.523L1544.4 482.782C1601.26 540.38 1670.8 566 1739.4 566C1882.93 566 2021 452.647 2021 282.523H1852.18L1655.42 83.2185C1598.56 25.6204 1528.15 0 1459.55 0C1316.02 0 1178.82 112.463 1178.82 282.523L982.07 83.2185C925.209 25.6204 854.792 0 786.196 0C642.663 0 505.47 112.463 505.47 282.523L0 283.413C0 454.428 139.892 565.046 283.425 565.046C352.021 565.046 421.559 539.426 476.6 483.672Z" fill="#FF004D"></path></svg>
+      <span class="m" style="font-size: 11px; color: #545454;">Mezo Testnet</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border: 1px solid #E2E2E2; border-radius: 999px; background: #FFFFFF;">
+      <span class="m t" style="font-size: 12px; font-weight: 600; color: #171717;">248.00</span>
+      <span class="m" style="font-size: 12px; color: #6B6B6B;">MUSD</span>
+      <span style="color: #FF004D; font-weight: 700; font-size: 15px; line-height: 1; margin-left: 2px;">+</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px 0 12px; border: 1px solid #E2E2E2; border-radius: 999px; background: #FFFFFF;">
+      <span style="width: 8px; height: 8px; border-radius: 999px; background: #06C167;"></span>
+      <span class="m" style="font-size: 12px; color: #171717;">0x69e3…2034</span>
+    </div>
+  </div>
+</div>
+<div style="width: 1280px; margin: 0 auto; padding: 44px 0 48px; display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 32px; align-items: start;">
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <div>
+      <div class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">Liquidity pool · MUSD</div>
+      <h1 class="d" style="margin: 14px 0 0; font-weight: 800; font-size: 44px; letter-spacing: -0.02em; line-height: 1.05; color: #000000;">Be the other side of every bet.</h1>
+      <p style="margin: 14px 0 0; max-width: 600px; font-size: 16px; line-height: 1.55; color: #545454;">Your MUSD backs every position on Yosuku. The pool keeps the stakes and fees from losing bets and pays the winners. Open bets can never promise more than half of it.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: #FFFFFF; border: 1px solid #E2E2E2; border-radius: 10px;">
+      <div style="padding: 18px 20px;">
+        <div class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">Pool</div>
+        <div class="d t" style="margin-top: 8px; font-weight: 700; font-size: 26px; color: #000000;">20,000.00</div>
+        <div class="m" style="margin-top: 2px; font-size: 10px; color: #6B6B6B;">MUSD</div>
+      </div>
+      <div style="padding: 18px 20px; border-left: 1px solid #EEEEEE;">
+        <div class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">Your share</div>
+        <div class="d t" style="margin-top: 8px; font-weight: 700; font-size: 26px; color: #000000;">1,500.00</div>
+        <div class="m" style="margin-top: 2px; font-size: 10px; color: #6B6B6B;">MUSD · 7.5% of the pool</div>
+      </div>
+      <div style="padding: 18px 20px; border-left: 1px solid #EEEEEE;">
+        <div class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">This period</div>
+        <div class="d t" style="margin-top: 8px; font-weight: 700; font-size: 26px; color: #03703C;">+86.40</div>
+        <div class="m" style="margin-top: 2px; font-size: 10px; color: #6B6B6B;">MUSD to the pool so far</div>
+      </div>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E2E2; border-radius: 10px; padding: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <span class="d" style="font-weight: 700; font-size: 16px; color: #000000;">Risk right now</span>
+        <span class="m" style="font-size: 10px; color: #6B6B6B;">across 3 live markets</span>
+      </div>
+      <div style="position: relative; margin-top: 20px; height: 8px; border-radius: 999px; background: #EEEEEE;">
+        <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 6.2%; border-radius: 999px; background: #FF004D;"></div>
+        <div style="position: absolute; left: 50%; top: -6px; width: 1px; height: 20px; background: #171717;"></div>
+      </div>
+      <div class="m" style="position: relative; height: 34px; margin-top: 8px; font-size: 10px;">
+        <span style="position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 6px; color: #171717;"><span style="width: 8px; height: 8px; border-radius: 2px; background: #FF004D;"></span><span class="t">1,240</span> worst case</span>
+        <span style="position: absolute; left: 50%; top: 0; transform: translateX(-50%); color: #171717;">cap <span class="t">10,000</span></span>
+        <span style="position: absolute; right: 0; top: 0; color: #6B6B6B;">pool <span class="t">20,000</span></span>
+      </div>
+      <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #545454;">The worst single outcome the pool could pay across every open bet. A new bet that would push it past the cap is refused.</p>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E2E2; border-radius: 10px; overflow: hidden;">
+      <div style="height: 4px; background: linear-gradient(90deg, #6B0036 0%, #D10069 33.65%, #FF004D 68.75%, #6B0036 100%);"></div>
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 20px;">
+        <div style="max-width: 560px;">
+          <div class="d" style="font-weight: 700; font-size: 16px; color: #000000;">Next pool update</div>
+          <p style="margin: 6px 0 0; font-size: 13px; line-height: 1.55; color: #545454;">Deposits and withdrawals wait for the update. It runs every 6 hours, once every market in the window has settled, so shares are always priced with nothing left open.</p>
+        </div>
+        <div style="text-align: right; flex-shrink: 0;">
+          <div class="d t" style="font-weight: 800; font-size: 30px; line-height: 1; color: #000000;">18:00 UTC</div>
+          <div class="m t" style="margin-top: 6px; font-size: 11px; color: #6B6B6B;">in 3h 53m</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <div style="background: #FFFFFF; border: 1px solid #E2E2E2; border-radius: 8px; padding: 20px;">
+      <div style="display: flex; gap: 4px; padding: 4px; margin-bottom: 12px; border: 1px solid #EEEEEE; background: #F6F6F6; border-radius: 6px;"><div class="m" style="flex: 1; text-align: center; padding: 8px 0; border-radius: 4px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.08); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #171717;">Deposit</div><div class="m" style="flex: 1; text-align: center; padding: 8px 0; border-radius: 4px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6B6B6B;">Withdraw</div></div>
+      <div style="border-top: 1px solid #EEEEEE; border-bottom: 1px solid #EEEEEE; padding: 12px 0; margin: 4px 0 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">Amount</span>
+          <span class="m" style="font-size: 9px; color: #6B6B6B;">Wallet 248.00</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="d t" style="flex: 1; font-weight: 700; font-size: 28px; line-height: 1; color: #000000;">200.00</span>
+          <span class="m" style="font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B6B6B;">MUSD</span>
+        </div>
+        <div style="display: flex; gap: 4px; margin-top: 10px;">
+          <span class="m" style="min-width: 40px; text-align: center; padding: 4px 8px; border: 1px solid #E2E2E2; border-radius: 4px; font-size: 9px; color: #545454;">+50</span>
+          <span class="m" style="min-width: 40px; text-align: center; padding: 4px 8px; border: 1px solid #E2E2E2; border-radius: 4px; font-size: 9px; color: #545454;">+100</span>
+          <span class="m" style="min-width: 40px; text-align: center; padding: 4px 8px; border: 1px solid #E2E2E2; border-radius: 4px; font-size: 9px; color: #545454;">Max</span>
+        </div>
+      </div>
+      <div class="m" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; font-size: 11px;">
+        <div style="display: flex; justify-content: space-between;"><span style="color: #6B6B6B;">Joins the pool</span><span style="color: #171717;">18:00 UTC</span></div>
+        <div style="display: flex; justify-content: space-between;"><span style="color: #6B6B6B;">Your share after</span><span class="t" style="color: #171717;">≈ 8.9%</span></div>
+        <div style="display: flex; justify-content: space-between;"><span style="color: #6B6B6B;">Deposit fee</span><span style="color: #171717;">None</span></div>
+      </div>
+      <div style="background: #FF004D; color: #000000; border-radius: 4px; padding: 13px 0; text-align: center; font-size: 14px; font-weight: 600;">Queue deposit · 200.00 MUSD</div>
+      <p class="m" style="margin: 10px 0 0; font-size: 9px; line-height: 1.6; color: #6B6B6B;">Withdrawals are never paused. Queue one any time and it pays out at the next update.</p>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E2E2; border-radius: 8px; padding: 16px 20px;">
+      <div class="m" style="font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #6B6B6B;">Your requests</div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+        <div>
+          <div style="font-size: 14px; font-weight: 600; color: #171717;">Deposit 100.00 MUSD</div>
+          <div class="m" style="margin-top: 2px; font-size: 10px; color: #6B6B6B;">queued 13:40 UTC</div>
+        </div>
+        <span class="m" style="display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 999px; background: #F6F6F6; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #545454;">Joins at 18:00</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</x-dc>
+</body>
+</html>
