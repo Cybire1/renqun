@@ -221,6 +221,13 @@ the bet in Portfolio with a live cash-out, Earn with the wallet's pool share, an
 15.75 MUSD swap from Add MUSD (allow + swap in 19.4 s). No page errors; `next build` prerenders
 every page. Bitcoin wallets (Xverse, Unisat) need Mezo Passport, which is not wired in yet.
 
+Hosted on Vercel at https://renqun.vercel.app (team `cybire`, project `renqun`, root directory
+`web`; `.vercelignore` uploads only the web app and the shared client). The same browser test
+passed against it on 2026-09-17: a 5 MUSD bet placed in 3.8 s and confirmed in 8.1 s. The
+hosted site has no drip yet (`NEXT_PUBLIC_MEZO_DRIP_URL` is unset), so it shows no free test MUSD
+and new wallets need test BTC from the faucet. Deploy again with `vercel deploy --prod` from the
+repo root.
+
 ## 7. The Renqun app (`mobile/`, v1)
 
 An Expo (SDK 54) app that trades the venue from a wallet made on the phone. Paths below are

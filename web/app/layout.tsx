@@ -10,7 +10,10 @@ const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600'], variabl
 const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['500', '700'], variable: '--font-jetbrains', display: 'swap' });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000'),
+  ),
   title: { default: 'Renqun', template: '%s · Renqun' },
   description: 'Call Bitcoin’s next move. Five-minute and hourly rounds, paid in MUSD on Mezo.',
   applicationName: 'Renqun',

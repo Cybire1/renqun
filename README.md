@@ -9,6 +9,8 @@ depositors takes the other side and earns the fee and the losing bets.
 
 人群 (rénqún) means "a crowd". The mark stacks three 人 into 众: a crowd, pointing up.
 
+**Web app:** [renqun.vercel.app](https://renqun.vercel.app)
+
 **Live on Mezo testnet:** `YosukuPredict` at
 [`0x85c9A910143A4814346132d93F221DE3FCF6536a`](https://explorer.test.mezo.org/address/0x85c9A910143A4814346132d93F221DE3FCF6536a)
 (source verified), with a funded pool and a keeper opening and settling rounds.

@@ -12,3 +12,7 @@ node_modules/
 # service state and logs
 .keeper/
 services/drip/.drip-state.json
+
+# vercel
+.vercel
+.env*

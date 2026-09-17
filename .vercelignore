@@ -1,0 +1,9 @@
+# Vercel builds only the web app and the shared client.
+/mobile
+/contracts
+/design
+/docs
+/services
+/scripts
+node_modules
+.next
