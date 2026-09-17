@@ -233,12 +233,18 @@ the bet in Portfolio with a live cash-out, Earn with the wallet's pool share, an
 15.75 MUSD swap from Add MUSD (allow + swap in 19.4 s). No page errors; `next build` prerenders
 every page. Bitcoin wallets (Xverse, Unisat) need Mezo Passport, which is not wired in yet.
 
-Hosted on Vercel at https://renqun.vercel.app (team `cybire`, project `renqun`, root directory
-`web`; `.vercelignore` uploads only the web app and the shared client). The same browser test
-passed against it on 2026-09-17: a 5 MUSD bet placed in 3.8 s and confirmed in 8.1 s. The
-hosted site has no drip yet (`NEXT_PUBLIC_MEZO_DRIP_URL` is unset), so it shows no free test MUSD
-and new wallets need test BTC from the faucet. Deploy again with `vercel deploy --prod` from the
-repo root.
+Hosted on Vercel at https://renqun.app (team `cybire`, project `renqun`, root directory `web`;
+`.vercelignore` uploads only the web app and the shared client). The project is connected to the
+GitHub repo, so every push to `main` deploys. The same browser test passed against it on
+2026-09-17: a 5 MUSD bet placed in 3.8 s and confirmed in 8.1 s.
+
+The starter drip also runs there, at `/api/drip` (`web/app/api/drip/route.ts`, testnet only, env
+`DRIP_PRIVATE_KEY` as a Vercel secret and `NEXT_PUBLIC_MEZO_DRIP_URL=/api`). A serverless function
+keeps no state file, so it reads history through the explorer: a wallet gets 20 test MUSD if the
+drip wallet has never sent it MUSD, gas when it holds under 0.000005 BTC (three top-ups a day), and
+the day stops at 50 wallets. Sends go out from the pending nonce with one retry on a nonce clash
+(the local drip shares the wallet). The app's testnet builds use it by default. Tested 2026-09-17: a
+fresh wallet got 0.00002 BTC and 20 MUSD in 2.8 s; a repeat sent nothing.
 
 ## 7. The Renqun app (`mobile/`, v1)
 
