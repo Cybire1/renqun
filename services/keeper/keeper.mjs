@@ -76,7 +76,13 @@ const log = (...a) => console.log(new Date().toISOString(), ...a);
 const read = (functionName, args = []) => pub.readContract({ address: PREDICT, abi, functionName, args });
 const why = (e) => [e.shortMessage || e.message, e.details].filter(Boolean).join(' · ').replace(/\s+/g, ' ');
 
-async function send(functionName, args, label) {
+/**
+ * One keeper transaction. `opts.priority` is for settles: they must land inside the venue's 60 s
+ * window, so they pay a higher gas price and (with `opts.nonce`) go out at the chain's own next
+ * nonce, replacing any earlier transaction of ours that the RPC dropped. A stuck pushVol used to
+ * hold the queue for two minutes and void the rounds waiting behind it (seen 2026-09-17).
+ */
+async function send(functionName, args, label, opts = {}) {
   if (DRY_RUN) {
     log('[dry-run]', label ?? functionName, args.map(String).join(' '));
     return;
@@ -87,9 +93,17 @@ async function send(functionName, args, label) {
   // floor". Gas is priced at a few hundred wei, so send a generous floor instead of trusting it.
   const estimate = await pub.estimateContractGas({ address: PREDICT, abi, functionName, args, account });
   const padded = (estimate * 3n) / 2n + 30_000n;
+  // Gas is a few hundred wei on Mezo, so paying a multiple of it costs nothing and keeps the
+  // transaction moving; a settle pays more again so it can replace a stuck one.
+  const gasPrice = (await pub.getGasPrice()) * (opts.priority ? 4n : 2n);
   let hash;
   try {
-    hash = await wallet.writeContract({ ...request, gas: padded > GAS_FLOOR ? padded : GAS_FLOOR });
+    hash = await wallet.writeContract({
+      ...request,
+      gas: padded > GAS_FLOOR ? padded : GAS_FLOOR,
+      gasPrice,
+      ...(opts.nonce === undefined ? {} : { nonce: opts.nonce }),
+    });
   } catch (e) {
     nonceManager.reset({ address: account.address, chainId: chain.id });
     throw e;
@@ -98,7 +112,7 @@ async function send(functionName, args, label) {
   // never shows up it was dropped, so re-read the nonce rather than leave a gap behind it.
   let receipt;
   try {
-    receipt = await waitForReceipt(hash);
+    receipt = await waitForReceipt(hash, opts.priority ? 45_000 : 60_000);
   } catch (e) {
     nonceManager.reset({ address: account.address, chainId: chain.id });
     throw e;
@@ -192,13 +206,19 @@ async function settleDue() {
   // Up to three rounds close in the same second (5-minute, hourly, later today). Settling them one
   // after another could run past the 60 s window, so they go out together; local nonces keep order.
   const due = [...live.values()].filter((m) => now >= m.expiry);
-  await Promise.all(due.map((m) => settleOne(m)));
+  if (!due.length) return;
+  // Start from the chain's own next nonce so the first settles replace anything of ours still
+  // pending, then hand the count back to the local manager.
+  const base = DRY_RUN ? 0 : await pub.getTransactionCount({ address: account.address });
+  await Promise.all(due.map((m, i) => settleOne(m, base + i)));
+  if (!DRY_RUN) nonceManager.reset({ address: account.address, chainId: chain.id });
 }
 
-async function settleOne(m) {
+async function settleOne(m, nonce) {
   for (let attempt = 1; attempt <= 4; attempt++) {
     try {
-      await send('settle', [m.id], `settle #${m.id}`);
+      // Only the first try takes a nonce: by the second, the manager has re-read the chain.
+      await send('settle', [m.id], `settle #${m.id}`, attempt === 1 ? { priority: true, nonce } : { priority: true });
       live.delete(m.id);
       break;
     } catch (e) {
@@ -221,7 +241,7 @@ async function settleOne(m) {
  * Call before every transaction. A send can take 10-20 s to confirm on the public RPC, so never start
  * one when a market closes within that time: wait for the close, then settle straight away.
  */
-const QUIET_BEFORE_EXPIRY_S = 20;
+const QUIET_BEFORE_EXPIRY_S = 25;
 async function guard() {
   const wall = Date.now() / 1000;
   const closing = [...live.values()].map((m) => m.expiry).filter((e) => e - wall < QUIET_BEFORE_EXPIRY_S);
@@ -275,7 +295,7 @@ async function tick() {
     await guard();
     const t = await chainNow();
     // A market about to close keeps its last surface (valid for volMaxAge); don't spend the quiet window on it.
-    if (!live.has(m.id) || m.expiry - t < QUIET_BEFORE_EXPIRY_S || t - m.lastVol < VOL_REFRESH_S) continue;
+    if (!live.has(m.id) || m.expiry - t < 45 || t - m.lastVol < VOL_REFRESH_S) continue;
     try {
       const spotRaw = await read('spotPrice'); // 1e9 USD, reverts if the oracle print is stale
       const surface = flatSurface(vol, m.expiry - t);
