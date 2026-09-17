@@ -4,7 +4,7 @@ node_modules/
 
 # secrets and local env
 .env
-.env.*
+.env*
 !.env.example
 *.key
 *.pem
@@ -15,4 +15,3 @@ services/drip/.drip-state.json
 
 # vercel
 .vercel
-.env*
