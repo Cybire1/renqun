@@ -20,7 +20,8 @@ depositors takes the other side and earns the fee and the losing bets.
 | [`contracts/`](contracts) | `YosukuPredict` (Foundry): markets, range digitals priced with SVI, settlement from Mezo's BTC oracle, and the epoch-priced LP pool. 56 tests, including DeepBook Predict's pricing reference points |
 | [`services/keeper/`](services/keeper/keeper.mjs) | Opens 5-minute and hourly rounds at spot, publishes volatility, settles at expiry, rolls pool epochs |
 | [`services/drip/`](services/drip/drip.mjs) | Starter drip: gas for every new player, plus 20 test MUSD on testnet, so a first bet needs nothing else |
-| [`client/`](client) | TypeScript data and transaction client for a web front end (viem) |
+| [`web/`](web) | The Renqun web app (Next.js): markets with a live oracle chart and the bet ticket, portfolio with cash-out and claims, the Earn pool, Add MUSD. Connects any browser wallet that announces itself (MetaMask, Rabby, OKX…) and adds Mezo to it |
+| [`client/`](client) | `@renqun/client`: the shared Mezo client the web app uses (markets, quotes, positions, pool, transaction builders, formatting). The app keeps a React Native twin in `mobile/lib/mezo` |
 | [`mobile/`](mobile) | The Renqun app (Expo): markets, one-swipe bets, Add MUSD, portfolio with cash-out, the Earn pool, backup and app lock |
 | [`design/`](design) | Design canvases for the app and the logo |
 | [`docs/MEZO_PORT.md`](docs/MEZO_PORT.md) | Design notes, verified Mezo facts and RPC quirks, deployment, status and what is left before mainnet |
@@ -30,7 +31,7 @@ depositors takes the other side and earns the fee and the losing bets.
 Needs Node 20+, [Foundry](https://getfoundry.sh) for the contracts, and Xcode for the iOS app.
 
 ```bash
-npm install                     # viem for the keeper, drip and client
+npm install                     # the keeper, drip, client and web app (npm workspaces)
 
 # contracts
 cd contracts
@@ -44,15 +45,19 @@ YOSUKU_MEZO_PREDICT=0x85c9A910143A4814346132d93F221DE3FCF6536a KEEPER_PRIVATE_KE
 # starter drip: its own funded wallet (not the keeper's), serves :8787
 DRIP_PRIVATE_KEY=0x… npm run drip
 
+# the web app, on http://localhost:3000
+npm run web                     # production: npm run web:build, then npm start --workspace web
+
 # the app
 cd mobile
 npm install
 npx expo run:ios                # first time builds the native app; after that, npx expo start
 ```
 
-The app talks to the live testnet deployment by default; see
-[`mobile/.env.example`](mobile/.env.example) for overrides. Dev builds use a drip on
-`http://localhost:8787`; release builds need `EXPO_PUBLIC_MEZO_DRIP_URL`.
+The web app and the app talk to the live testnet deployment by default; see
+[`web/.env.example`](web/.env.example) and [`mobile/.env.example`](mobile/.env.example) for
+overrides. In development both use a drip on `http://localhost:8787`; production builds need
+`NEXT_PUBLIC_MEZO_DRIP_URL` / `EXPO_PUBLIC_MEZO_DRIP_URL`.
 
 Never commit keys. The keeper and drip read them from the environment only.
 

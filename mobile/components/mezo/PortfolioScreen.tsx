@@ -222,7 +222,7 @@ function PositionRow({
   } else if (p.cashedOut) {
     headline = 'Cashed out';
     headColor = mz.text2;
-    sub = `paid ${musd(p.premium)}`;
+    sub = `stake ${musd(p.premium)}`;
   } else if (m.status === 'void') {
     headline = `+${musd(p.premium)}`;
     sub = p.open ? 'refund to collect' : 'refunded';
@@ -255,7 +255,7 @@ function PositionRow({
       {live ? (
         <View style={styles.rowFoot}>
           <Text style={type.small}>
-            Paid <Text style={styles.footStrong}>{musd(p.premium)}</Text> · pays <Text style={styles.footStrong}>{musd(p.quantity)}</Text>
+            Stake <Text style={styles.footStrong}>{musd(p.premium)}</Text> · pays <Text style={styles.footStrong}>{musd(p.quantity)}</Text>
           </Text>
           {p.cashOut != null && p.cashOut > 0n && left > 0 ? (
             <PressableScale

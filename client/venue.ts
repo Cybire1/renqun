@@ -1,13 +1,12 @@
-// YosukuPredict on Mezo: reads and transaction builders for the app.
-// Twin of client/venue.ts (the web client), plus what a phone needs: chart history from the
-// oracle itself, paged event scans (the public RPC caps eth_getLogs at 10,000 blocks), and the
-// LP vault.
+// YosukuPredict on Mezo: reads and transaction builders for Renqun's web front end. The app keeps a
+// twin in mobile/lib/mezo/client.ts. Chart history comes from the oracle itself, event scans are
+// paged (the public RPC caps eth_getLogs at 10,000 blocks) with the explorer tried first, and the
+// LP vault is read here too.
 //
 // Product model (same as DeepBook Predict): rolling BTC markets selling range digitals. A position
 // pays `quantity` MUSD if BTC settles in (lower, higher]. Ticks index a 256-tick grid per market;
 // strike = tick × tickSize (USD, 1e9-scaled). The keeper opens each grid centred on spot, so the
 // centre tick is the market's opening price: the "UP line".
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   createPublicClient,
   fallback,
@@ -23,7 +22,8 @@ import {
   type Log,
   type PublicClient,
 } from 'viem';
-import { yosukuPredictAbi as abi } from './abi';
+import { yosukuPredictAbi as abi } from './abi/yosukuPredict';
+import { store } from './storage';
 import { MEZO, MEZO_BTC_TOKEN, MEZO_PRICE_ORACLE, mezoChain } from './network';
 
 export const F = 1_000_000_000n;
@@ -361,7 +361,7 @@ async function scanEvents(
   const storeKey = `mezo_scan_${MEZO.network}_${MEZO.predict}_${key}_${owner.toLowerCase()}`;
   let state: ScanState = { scannedTo: (MEZO.deployBlock - 1n).toString(), ids: [] };
   try {
-    const raw = await AsyncStorage.getItem(storeKey);
+    const raw = await store.getItem(storeKey);
     if (raw) state = JSON.parse(raw) as ScanState;
   } catch {
     /* rescan */
@@ -377,7 +377,7 @@ async function scanEvents(
   if (fromExplorer) {
     for (const id of fromExplorer) found.add(id.toString());
     state = { scannedTo: head.toString(), ids: [...found] };
-    AsyncStorage.setItem(storeKey, JSON.stringify(state)).catch(() => {});
+    store.setItem(storeKey, JSON.stringify(state)).catch(() => {});
     return [...found].map((x) => BigInt(x));
   }
   let chunks = 0;
@@ -404,9 +404,9 @@ async function scanEvents(
     state = { scannedTo: to.toString(), ids: [...found] };
     from = to + 1n;
     // Keep progress if a long first scan is interrupted.
-    if (++chunks % 10 === 0) AsyncStorage.setItem(storeKey, JSON.stringify(state)).catch(() => {});
+    if (++chunks % 10 === 0) store.setItem(storeKey, JSON.stringify(state)).catch(() => {});
   }
-  AsyncStorage.setItem(storeKey, JSON.stringify(state)).catch(() => {});
+  store.setItem(storeKey, JSON.stringify(state)).catch(() => {});
   return [...found].map((x) => BigInt(x));
 }
 
@@ -450,10 +450,10 @@ async function explorerLogs(eventName: keyof typeof EVENT_SHAPE, owner: Address,
 export async function rememberPosition(owner: Address, id: bigint): Promise<void> {
   const storeKey = `mezo_scan_${MEZO.network}_${MEZO.predict}_minted_${owner.toLowerCase()}`;
   try {
-    const raw = await AsyncStorage.getItem(storeKey);
+    const raw = await store.getItem(storeKey);
     const state: ScanState = raw ? JSON.parse(raw) : { scannedTo: (MEZO.deployBlock - 1n).toString(), ids: [] };
     if (!state.ids.includes(id.toString())) state.ids.push(id.toString());
-    await AsyncStorage.setItem(storeKey, JSON.stringify(state));
+    await store.setItem(storeKey, JSON.stringify(state));
   } catch {
     /* next scan finds it */
   }

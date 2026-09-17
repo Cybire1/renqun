@@ -19,8 +19,8 @@ Started 2026-09-16.
 | Deploy script (testnet/mainnet) | **Done**, simulated against live testnet | `contracts/script/Deploy.s.sol` |
 | Keeper (markets, vol, settle, epochs) | **Done (v1)**, running against testnet (5-minute and hourly rounds) | `services/keeper/keeper.mjs` |
 | Starter drip (gas for every player, test MUSD on testnet) | **Done (v1)**, running against testnet; mainnet needs attestation | `services/drip/drip.mjs` |
-| Web client: chain config, typed ABI, trading client | **Done** | `client/{network,predictClient}.ts`, `client/abi/` |
-| Web UI (wallet, ticket, portfolio) | Not started | see §6 |
+| Shared client (`@renqun/client`) | **Done** | `client/`: network, venue reads and tx builders, formatting, drip client |
+| Web app (wallet, markets, ticket, portfolio, Earn, Add MUSD) | **Done (v1)**, tested end to end on testnet | `web/`; see §6 |
 | Mobile (Expo) | **Done (v1)**: markets, bet sheet, Add MUSD (drip, Tigris swap, MetaMask), portfolio, wallet + Earn, settings; gas covered by the drip; tested end-to-end on testnet | `mobile/`; see §7 |
 | Testnet deployment | **Live and funded**: `YosukuPredict` `0x85c9A910143A4814346132d93F221DE3FCF6536a` (verified), 1,500 MUSD in the pool | §3a |
 | Audit | Not started | required by the Founder Program listing bar |
@@ -110,7 +110,7 @@ Started 2026-09-16.
 
 | Quirk | Seen as | Handling |
 |---|---|---|
-| `eth_getLogs` span capped at 10,000 blocks (~11 h) | `maximum [from, to] blocks distance: 10000` | paged scans in `client/predictClient.ts` and the app's `scanEvents` |
+| `eth_getLogs` span capped at 10,000 blocks (~11 h) | `maximum [from, to] blocks distance: 10000` | explorer-first, paged scans in `scanEvents` (`client/venue.ts` and the app) |
 | Gas estimates disagree between nodes, sometimes below the EIP-7623 calldata floor | `gas limit below EIP-7623 floor: 21416 < 22040`; the same call estimated 67,356 elsewhere | padded estimate with a per-call floor (keeper 300k; app per function, see `TxRequest.gasFloor`) |
 | Load-balanced nodes lag each other by a few seconds | pending nonce reads stale (`Missing or invalid parameters`); a mined tx's receipt returns null from one node, so viem's `waitForTransactionReceipt` throws on a tx that landed | keeper counts nonces locally and resets on failure; both keeper and app poll receipts and treat "not found" as "not yet" |
 | Occasional connection resets | `fetch failed` | viem transport retries; the keeper's next loop retries |
@@ -198,14 +198,28 @@ npx expo run:ios                      # first native build; then npx expo start
 
 ---
 
-## 6. Web client
+## 6. The Renqun web app (`web/`, v1)
 
-`client/` is the data and transaction layer for a web front end: network config
-(`client/network.ts`), markets, quotes, positions and mint/redeem/claim builders
-(`client/predictClient.ts`), and the generated ABI (`client/abi/`). The web UI is not in this repo
-yet. The plan for it: wagmi with `@mezo-org/passport` (RainbowKit with Xverse, Unisat and OKX next
-to EVM wallets), the ticket and portfolio fed by `quote` / `buildMint` / `buildRedeem` /
-`buildClaim` and `fetchPositionsOf`, and a one-time MUSD approval in place of any account setup.
+A Next.js 16 app on the shared client `@renqun/client` (`client/`, an npm workspace compiled by
+Next). Every page is static; all data comes from Mezo in the browser.
+
+| Piece | File | Notes |
+|---|---|---|
+| Shared client | `client/` | the app's tested Mezo logic (`venue.ts`, `network.ts`, `format.ts`, `funding.ts`) with browser storage (`storage.ts`) and `NEXT_PUBLIC_*` settings |
+| Wallets | `web/lib/wallet.tsx` | EIP-6963 discovery (any installed EVM wallet, with its own name and icon; `window.ethereum` as a fallback), silent reconnect, switch to Mezo and add the network when the wallet has never seen it (4902), sends with the same simulate → padded gas → receipt polling as the app; on testnet a wallet with no gas asks the drip |
+| Live data | `web/lib/hooks.ts` | polling that pauses in background tabs, one refresh for everything after a transaction |
+| Markets | `web/components/Markets.tsx`, `Chart.tsx` | 5 min / 1 hour, the round's question, live oracle price, SVG chart green above the Up line and grey below, progress, just-closed result, last rounds, up next |
+| Ticket | `web/components/Ticket.tsx` | the app's rules: fresh quote, entry band, pool capacity, 30 s cutoff, 3¢ price-move bound with two re-quotes, confirmation from the `Minted` event; a first bet asks the wallet to allow MUSD, then to bet |
+| Portfolio | `web/components/Portfolio.tsx` | in play, could pay, collect all, open (winning/behind, cash out) and settled rows |
+| Earn | `web/components/Earn.tsx` | pool, your share, risk against its limit, next update, deposit / withdraw requests and collecting them; pool numbers show without a wallet |
+| Add MUSD | `web/components/FundsDialog.tsx` | free test MUSD, BTC → MUSD on Tigris, send from another wallet, borrow link |
+| Brand | `web/app/icon.svg`, `apple-icon.png`, `opengraph-image.png`, `web/components/RenqunMark.tsx` | the Renqun mark and name, same geometry as the app |
+
+Verified 2026-09-17 in headless Chromium against live testnet, with an injected EIP-6963 wallet
+signing for a test key: connect, a 5 MUSD Down bet shown as placed in 3.8 s and confirmed in 5.6 s,
+the bet in Portfolio with a live cash-out, Earn with the wallet's pool share, and a 0.0002 BTC →
+15.75 MUSD swap from Add MUSD (allow + swap in 19.4 s). No page errors; `next build` prerenders
+every page. Bitcoin wallets (Xverse, Unisat) need Mezo Passport, which is not wired in yet.
 
 ## 7. The Renqun app (`mobile/`, v1)
 
