@@ -62,8 +62,9 @@ const TESTNET: MezoNetworkConfig = {
   explorerApi: 'https://api.explorer.test.mezo.org/api',
   dexRouter: '0x9a1ff7FE3a0F69959A3fBa1F1e5ee18e1A9CD7E9',
   dexFactory: '0x4947243CC818b627A5D06d14C4eCe7398A23Ce1A',
-  // In development the simulator reaches a drip running on this Mac.
-  dripUrl: process.env.EXPO_PUBLIC_MEZO_DRIP_URL || (typeof __DEV__ !== 'undefined' && __DEV__ ? 'http://localhost:8787' : ''),
+  // The hosted drip (web/app/api/drip). Point EXPO_PUBLIC_MEZO_DRIP_URL at http://localhost:8787 to use
+  // services/drip on this machine instead.
+  dripUrl: process.env.EXPO_PUBLIC_MEZO_DRIP_URL || 'https://renqun.app/api',
 };
 
 const MAINNET: MezoNetworkConfig = {
