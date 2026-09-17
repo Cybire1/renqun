@@ -21,6 +21,8 @@ import {
   pct,
   quoteStake,
   rememberPosition,
+  roundName,
+  timeWords,
   sideRange,
   toWad,
   txApproveMusd,
@@ -58,6 +60,8 @@ export function Ticket({
   now,
   nextRound,
   onPickNext,
+  line,
+  plain = false,
 }: {
   market: Market | null;
   side: Side;
@@ -66,6 +70,10 @@ export function Ticket({
   now: number;
   nextRound: Market | null;
   onPickNext: (m: Market) => void;
+  /** A yes/no question at this price instead of the round's own Up line. */
+  line?: { tick: bigint; usd: number };
+  /** Inside a dialog: no card or sticky wrapper. */
+  plain?: boolean;
 }) {
   const { address, send, openDialog } = useWallet();
   const { openFunds } = useFunds();
@@ -91,11 +99,15 @@ export function Ticket({
   }, [walletMusd]);
 
   const stake = toWad(parseFloat(amount.replace(',', '.')));
-  const [lower, upper] = market ? sideRange(side, market.strikeTick) : [0n, 0n];
+  const lineTick = line?.tick ?? market?.strikeTick ?? 0n;
+  const lineUsd = line?.usd ?? market?.strike ?? 0;
+  const ask = line != null;
+  const sideName = (s: Side) => (ask ? (s === 'up' ? 'Yes' : 'No') : s === 'up' ? 'Up' : 'Down');
+  const [lower, upper] = market ? sideRange(side, lineTick) : [0n, 0n];
   const quote = usePoll(
     market && stake > 0n ? () => quoteStake(market, lower, upper, stake) : null,
     6_000,
-    `q:${market?.id}:${side}:${stake}`,
+    `q:${market?.id}:${lineTick}:${side}:${stake}`,
     { keepData: true },
   );
   const q = stake > 0n ? quote.data : null;
@@ -144,7 +156,7 @@ export function Ticket({
         if (live.quantity === 0n) throw new Error('PremiumTooSmall');
         if (!(await inEntryBand(Number(live.premium) / Number(live.quantity)))) throw new Error('PriceOutOfBand');
         setBusy(attempt === 0 ? 'Confirm the bet in your wallet…' : 'The price moved. Confirm again…');
-        const base = { side, quantity: live.quantity, cost: live.cost, strike: market.strike, expiry: market.expiry };
+        const base = { side, quantity: live.quantity, cost: live.cost, strike: lineUsd, expiry: market.expiry };
         let receipt;
         try {
           receipt = await send(txMint(market.id, lower, upper, live.quantity, capCost(live.cost, live.quantity)), {
@@ -167,14 +179,16 @@ export function Ticket({
     }
   };
 
+  const shell = plain ? 'ticket plain' : 'card ticket area-ticket';
+
   if (placed) {
     return (
-      <aside className="card ticket area-ticket" aria-live="polite">
+      <aside className={shell} aria-live="polite">
         <div className="placed">
           <span className="placed-mark">{placed.confirmed ? <Glyph name="check" size={28} color="#03703c" weight={2.6} /> : <span className="spinner" style={{ width: 24, height: 24, color: '#03703c' }} />}</span>
           <h2>{placed.confirmed ? "You're in" : 'Placing your bet'}</h2>
           <p className="body">
-            {placed.side === 'up' ? 'Up' : 'Down'} pays <b className="strong">{musd(placed.quantity)} MUSD</b> if BTC is {placed.side === 'up' ? 'above' : 'at or below'} {usd0(placed.strike)} at {hhmm(placed.expiry)}.
+            {sideName(placed.side)} pays <b className="strong">{musd(placed.quantity)} MUSD</b> if Bitcoin is {placed.side === 'up' ? 'above' : 'at or below'} {usd0(placed.strike)} at {ask ? timeWords(placed.expiry, now) : hhmm(placed.expiry)}.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Countdown msLeft={placed.expiry - now} />
@@ -201,28 +215,40 @@ export function Ticket({
   else if (stake === 0n) blocker = 'Enter an amount';
   else if (address && tooMuch) blocker = 'Not enough MUSD';
   else if (overPool && poolMax != null) blocker = `Max ${money(Number(poolMax) / 1e18)} on this round`;
-  else if (lopsided) blocker = up ? 'Up is all but certain now' : 'Down has almost no chance now';
+  else if (lopsided) blocker = chance != null && chance > ENTRY_BAND.max ? `${sideName(side)} is all but certain now` : `${sideName(side)} has almost no chance now`;
   else if (tooSmall) blocker = 'Minimum 1 MUSD';
 
   return (
-    <aside className="card ticket area-ticket" aria-label="Bet ticket">
+    <aside className={shell} aria-label="Bet ticket">
+      {ask && market ? (
+        <div className="ticket-round">
+          <div>
+            <h2>
+              Bitcoin above {usd0(lineUsd)} at {timeWords(market.expiry, now)}?
+            </h2>
+            <div className="small">Yes pays if it is, No if it isn&apos;t.</div>
+          </div>
+        </div>
+      ) : null}
       <div className="sides" role="group" aria-label="Your call">
         {(['up', 'down'] as const).map((s) => (
           <button key={s} type="button" className={`side ${s}`} aria-pressed={side === s} onClick={() => onSide(s)}>
-            <Tri dir={s} size={11} />
-            {s === 'up' ? 'Up' : 'Down'}
+            {ask ? null : <Tri dir={s} size={11} />}
+            {sideName(s)}
             <small>{odds ? pct(s === 'up' ? odds.up : odds.down) : '—'}</small>
           </button>
         ))}
       </div>
 
-      <div className="ticket-round">
-        <div>
-          <h2>{market ? `BTC ${up ? 'above' : 'at or below'} ${usd0(market.strike)}` : 'Next round'}</h2>
-          <div className="small">{market ? `${market.cadence === '1h' ? 'Hourly' : '5-minute'} round · closes ${hhmm(market.expiry)}` : 'Opening in a moment'}</div>
+      {ask ? null : (
+        <div className="ticket-round">
+          <div>
+            <h2>{market ? `BTC ${up ? 'above' : 'at or below'} ${usd0(market.strike)}` : 'Next round'}</h2>
+            <div className="small">{market ? `${roundName(market.cadence)} round · closes ${hhmm(market.expiry)}` : 'Opening in a moment'}</div>
+          </div>
+          {market ? <Countdown msLeft={market.expiry - now} /> : null}
         </div>
-        {market ? <Countdown msLeft={market.expiry - now} /> : null}
-      </div>
+      )}
 
       <div className="amount">
         <label className="amount-row" htmlFor="stake">
@@ -299,7 +325,7 @@ export function Ticket({
         </>
       ) : (
         <Button tone="red" className="block tall" busy={busy !== null} disabled={busy !== null || blocker !== null || !q} onClick={() => void place()}>
-          {busy ?? blocker ?? `Bet ${up ? 'Up' : 'Down'} · ${q ? money(Number(q.cost) / 1e18) : amount}`}
+          {busy ?? blocker ?? `Bet ${sideName(side)} · ${q ? money(Number(q.cost) / 1e18) : amount}`}
         </Button>
       )}
     </aside>

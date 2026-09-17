@@ -11,15 +11,19 @@ import {
   hhmm,
   inRange,
   liveRounds,
+  pays,
+  pct,
+  roundName,
   usd0,
   type Cadence,
   type Market,
   type Side,
 } from '@renqun/client';
-import { useMarkets, useNow, useOdds, useSpotSeries } from '@/lib/hooks';
+import { useMarkets, useMedia, useNow, useOdds, useSpotSeries } from '@/lib/hooks';
 import { Chart } from './Chart';
 import { Ticket } from './Ticket';
-import { Countdown, EmptyState, Segmented, Skeleton, Tri } from './ui';
+import { WordMarkets } from './WordMarkets';
+import { Countdown, EmptyState, Segmented, Sheet, Skeleton, Tri } from './ui';
 
 const CADENCES: { key: Cadence; label: string; minutes: number }[] = [
   { key: '5m', label: '5 min', minutes: 5 },
@@ -36,6 +40,9 @@ export function Markets() {
   const [cadence, setCadence] = useState<Cadence>('5m');
   const [pickedId, setPickedId] = useState<bigint | null>(null);
   const [side, setSide] = useState<Side>('up');
+  // On phone widths the ticket waits in a bottom sheet until Up or Down is tapped.
+  const narrow = useMedia('(max-width: 980px)');
+  const [sheetOpen, setSheetOpen] = useState(false);
   const markets = useMarkets();
   const minutes = CADENCES.find((c) => c.key === cadence)!.minutes;
   const { series, spot } = useSpotSeries(minutes);
@@ -89,7 +96,7 @@ export function Markets() {
               <div className="round-top">
                 <span className="live label">
                   <i className="live-dot" aria-hidden />
-                  {cadence === '5m' ? '5-minute round' : 'Hourly round'}
+                  {roundName(cadence)} round
                 </span>
                 <Countdown msLeft={market.expiry - now} />
               </div>
@@ -198,7 +205,7 @@ export function Markets() {
           ) : null}
         </div>
 
-        {MEZO_PREDICT_LIVE ? (
+        {MEZO_PREDICT_LIVE && narrow === false ? (
           <Ticket
             market={ticketMarket}
             side={side}
@@ -209,7 +216,49 @@ export function Markets() {
             onPickNext={(m) => setPickedId(m.id)}
           />
         ) : null}
+
+        {MEZO_PREDICT_LIVE && narrow ? (
+          <div className="area-ticket side-buttons" role="group" aria-label="Place a bet">
+            {(['up', 'down'] as const).map((s) => {
+              const chance = odds ? (s === 'up' ? odds.up : odds.down) : null;
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  className={`side-btn ${s}`}
+                  disabled={!ticketMarket}
+                  onClick={() => {
+                    setSide(s);
+                    setSheetOpen(true);
+                  }}
+                >
+                  <Tri dir={s} size={11} />
+                  {s === 'up' ? 'Up' : 'Down'}
+                  <b>{chance != null ? pct(chance) : '—'}</b>
+                  {chance != null && chance >= 0.01 && chance <= 0.99 ? <small>{pays(chance)}</small> : null}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
       </div>
+
+      {narrow && sheetOpen ? (
+        <Sheet open onClose={() => setSheetOpen(false)} title="Your bet">
+          <Ticket
+            plain
+            market={ticketMarket}
+            side={side}
+            onSide={setSide}
+            odds={odds}
+            now={now}
+            nextRound={nextBettable}
+            onPickNext={(m) => setPickedId(m.id)}
+          />
+        </Sheet>
+      ) : null}
+
+      {MEZO_PREDICT_LIVE && now ? <WordMarkets markets={markets.data ?? []} spotUsd={spot?.usd ?? null} now={now} /> : null}
     </div>
   );
 }

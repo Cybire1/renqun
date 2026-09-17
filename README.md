@@ -22,7 +22,7 @@ depositors takes the other side and earns the fee and the losing bets.
 | [`contracts/`](contracts) | `YosukuPredict` (Foundry): markets, range digitals priced with SVI, settlement from Mezo's BTC oracle, and the epoch-priced LP pool. 56 tests, including DeepBook Predict's pricing reference points |
 | [`services/keeper/`](services/keeper/keeper.mjs) | Opens 5-minute and hourly rounds at spot, publishes volatility, settles at expiry, rolls pool epochs |
 | [`services/drip/`](services/drip/drip.mjs) | Starter drip: gas for every new player, plus 20 test MUSD on testnet, so a first bet needs nothing else |
-| [`web/`](web) | The Renqun web app (Next.js): markets with a live oracle chart and the bet ticket, portfolio with cash-out and claims, the Earn pool, Add MUSD. Connects any browser wallet that announces itself (MetaMask, Rabby, OKX…) and adds Mezo to it |
+| [`web/`](web) | The Renqun web app (Next.js): markets with a live oracle chart and the bet ticket, "Just ask" yes/no questions for later today, portfolio with cash-out and claims, the Earn pool, Add MUSD. Connects any browser wallet that announces itself (MetaMask, Rabby, OKX…) and adds Mezo to it |
 | [`client/`](client) | `@renqun/client`: the shared Mezo client the web app uses (markets, quotes, positions, pool, transaction builders, formatting). The app keeps a React Native twin in `mobile/lib/mezo` |
 | [`mobile/`](mobile) | The Renqun app (Expo): markets, one-swipe bets, Add MUSD, portfolio with cash-out, the Earn pool, backup and app lock |
 | [`design/`](design) | Design canvases for the app and the logo |

@@ -9,11 +9,12 @@ import { LiveDot, PressableScale, haptic } from '../../lib/motion';
 import { fonts } from '../../lib/theme';
 import { mz, r, type } from '../../lib/mezo/theme';
 import { clock, hhmm, pays, pct, usd0 } from '../../lib/mezo/format';
-import { bettable, liveRounds, type Cadence, type Market } from '../../lib/mezo/client';
+import { bettable, liveRounds, roundName, type Cadence, type Market } from '../../lib/mezo/client';
 import { useBalances, useMarkets, useMezoAddress, useNow, useOdds, useSpotSeries, useStarterFunds } from '../../lib/mezo/hooks';
 import { isMezoOnboarded } from '../../lib/mezo/wallet';
 import { MEZO_PREDICT_LIVE } from '../../lib/mezo/network';
 import { Skeleton } from '../Skeleton';
+import { JustAsk } from './JustAsk';
 import { LiveChart } from './LiveChart';
 import { Countdown, EmptyState, Pill, Segmented, SideTile, Surface, Ticker, TopBar, Tri } from './ui';
 
@@ -109,7 +110,7 @@ export function MezoMarketsScreen() {
               <View style={styles.heroTop}>
                 <View style={styles.live}>
                   <LiveDot color={mz.red} size={7} />
-                  <Text style={type.label}>{cadence === '5m' ? '5-minute round' : 'Hourly round'}</Text>
+                  <Text style={type.label}>{roundName(cadence)} round</Text>
                 </View>
                 <Countdown msLeft={market.expiry - now} />
               </View>
@@ -207,6 +208,8 @@ export function MezoMarketsScreen() {
                 </Surface>
               </Animated.View>
             ) : null}
+
+            <JustAsk markets={markets.data ?? []} spotUsd={spot?.usd ?? null} now={now} />
           </Animated.View>
         ) : markets.loading ? (
           <HeroSkeleton />

@@ -51,6 +51,10 @@ const CADENCES = [
   { name: '5m', seconds: 300, tickSize: 10n * F, ahead: 2 },
   { name: '1h', seconds: 3600, tickSize: 25n * F, ahead: 1 },
 ];
+// "Later today": one round per pool epoch, closing when the epoch ends (a market cannot outlive its
+// epoch), on a wider $50 grid (±$6,400). The apps turn it into plain yes/no questions at round-number
+// prices. Not opened in the last half hour of an epoch.
+const LATER = { name: 'later', tickSize: 50n * F, minLeadS: 30 * 60 };
 
 if (!PREDICT) throw new Error('YOSUKU_MEZO_PREDICT is required');
 if (!process.env.KEEPER_PRIVATE_KEY) throw new Error('KEEPER_PRIVATE_KEY is required');
@@ -185,26 +189,30 @@ async function settleDue() {
   // A lagging RPC node can report a block from before expiry; the wall clock decides what is due and
   // the contract's own check (MarketNotResolved) makes an early attempt wait and retry.
   const now = Math.max(await chainNow(), Math.floor(Date.now() / 1000));
-  for (const m of [...live.values()]) {
-    if (now < m.expiry) continue;
-    for (let attempt = 1; attempt <= 4; attempt++) {
-      try {
-        await send('settle', [m.id], `settle #${m.id}`);
+  // Up to three rounds close in the same second (5-minute, hourly, later today). Settling them one
+  // after another could run past the 60 s window, so they go out together; local nonces keep order.
+  const due = [...live.values()].filter((m) => now >= m.expiry);
+  await Promise.all(due.map((m) => settleOne(m)));
+}
+
+async function settleOne(m) {
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    try {
+      await send('settle', [m.id], `settle #${m.id}`);
+      live.delete(m.id);
+      break;
+    } catch (e) {
+      const reason = `${e.shortMessage || ''} ${e.message || ''}`;
+      if (/MarketNotLive/.test(reason)) {
         live.delete(m.id);
         break;
-      } catch (e) {
-        const reason = `${e.shortMessage || ''} ${e.message || ''}`;
-        if (/MarketNotLive/.test(reason)) {
-          live.delete(m.id);
-          break;
-        }
-        // MarketNotResolved / AwaitingOraclePrint clear within a block or two (~4 s each); network
-        // errors usually clear as fast.
-        if (!/MarketNotResolved|AwaitingOraclePrint/.test(reason) || attempt === 4) {
-          log('settle retry', `#${m.id}`, `attempt ${attempt}`, why(e));
-        }
-        if (attempt < 4) await sleep(3_000);
       }
+      // MarketNotResolved / AwaitingOraclePrint clear within a block or two (~4 s each); network
+      // errors usually clear as fast.
+      if (!/MarketNotResolved|AwaitingOraclePrint/.test(reason) || attempt === 4) {
+        log('settle retry', `#${m.id}`, `attempt ${attempt}`, why(e));
+      }
+      if (attempt < 4) await sleep(3_000);
     }
   }
 }
@@ -253,6 +261,11 @@ async function tick() {
         await send('createMarketAtSpot', [BigInt(expiry), c.tickSize], `open ${c.name} @${expiry}`);
       }
     }
+  }
+  const laterOpen = [...live.values()].some((m) => m.expiry === end && m.tickSize === LATER.tickSize);
+  if (!laterOpen && end - now >= LATER.minLeadS) {
+    await guard();
+    await send('createMarketAtSpot', [BigInt(end), LATER.tickSize], `open ${LATER.name} @${end}`);
   }
   await syncMarkets();
 

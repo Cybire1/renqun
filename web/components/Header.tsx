@@ -46,7 +46,7 @@ export function Header() {
                 <b>{balances.data ? musd(balances.data.musd) : '—'}</b>
                 <span>MUSD</span>
                 <em>
-                  <Glyph name="plus" size={13} color="#000" weight={2.6} />
+                  <Glyph name="plus" size={13} color="#fff" weight={2.6} />
                 </em>
               </button>
               <AccountMenu address={address} icon={wallet?.icon ?? ''} walletName={wallet?.name ?? 'Wallet'} />

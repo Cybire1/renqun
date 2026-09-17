@@ -1,5 +1,5 @@
 /* Renqun web. Same tokens as the app (mobile/lib/mezo/theme.ts): sand page, white surfaces lifted by
-   a warm shadow, one red for identity and the next action, soft Up and Down tones. */
+   a warm shadow, one red for identity and the next action (white labels on it), soft Up and Down tones. */
 
 :root {
   --sand: #f4f0ed;
@@ -214,7 +214,7 @@ main {
 
 .btn.red {
   background: var(--red);
-  color: var(--black);
+  color: #ffffff;
 }
 
 .btn.red:disabled:not([aria-busy]) {
@@ -350,7 +350,7 @@ main {
 
 .countdown.final {
   background: var(--red);
-  color: var(--black);
+  color: #ffffff;
 }
 
 .error-line {
@@ -1010,6 +1010,202 @@ main {
   text-underline-offset: 3px;
 }
 
+/* ── just ask ── */
+
+.ask {
+  margin-top: 48px;
+}
+
+.ask-head {
+  display: grid;
+  gap: 6px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--hairline);
+  position: relative;
+}
+
+.ask-head::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 56px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--red);
+}
+
+.ask-title {
+  margin: 0;
+  font: 700 30px/1.1 var(--font-display);
+  letter-spacing: -0.7px;
+  color: var(--black);
+}
+
+.ask-sub {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 24px 0 14px;
+}
+
+.ask-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.ask-card {
+  padding: 22px;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.ask-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.coin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #f7931a;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 16px/1 var(--font-body);
+  box-shadow: 0 3px 8px rgba(247, 147, 26, 0.25);
+}
+
+.ask-clock {
+  margin-left: auto;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.ask-q {
+  margin: 0;
+  font: 700 24px/1.18 var(--font-display);
+  letter-spacing: -0.5px;
+  color: var(--black);
+  text-wrap: balance;
+}
+
+.lean {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--down-soft);
+  overflow: hidden;
+}
+
+.lean span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: #3fc981;
+  transition: width 600ms ease;
+}
+
+.yesno {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.yesno button {
+  height: 46px;
+  border: 0;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: 600 15px/1 var(--font-body);
+  transition: background-color 160ms ease, transform 120ms ease;
+}
+
+.yesno button:active {
+  transform: scale(0.97);
+}
+
+.yesno .yes {
+  background: var(--up-soft);
+  color: var(--green-text);
+}
+
+.yesno .yes:hover {
+  background: #cfeedd;
+}
+
+.yesno .no {
+  background: var(--down-soft);
+  color: var(--down-text);
+}
+
+.yesno .no:hover {
+  background: #e3dbd4;
+}
+
+.ask-empty {
+  padding: 22px;
+}
+
+.ticket.plain {
+  display: grid;
+  gap: 16px;
+  padding: 0;
+  position: static;
+}
+
+.side-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.side-btn {
+  height: 58px;
+  border-radius: 18px;
+  border: 1.5px solid;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font: 600 17px/1 var(--font-body);
+  transition: transform 120ms ease;
+}
+
+.side-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.side-btn b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.side-btn small {
+  font: 500 13px/1 var(--font-body);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.side-btn.up {
+  background: var(--up-soft);
+  border-color: var(--up-line);
+  color: var(--green-text);
+}
+
+.side-btn.down {
+  background: var(--down-soft);
+  border-color: var(--down-line);
+  color: var(--down-text);
+}
+
 /* ── portfolio ── */
 
 .stats {
@@ -1235,6 +1431,29 @@ dialog.sheet {
   background: var(--card);
   color: var(--ink);
   box-shadow: 0 24px 60px rgba(40, 24, 12, 0.22);
+}
+
+@media (max-width: 640px) {
+  /* A bottom sheet on phones. */
+  dialog.sheet {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92dvh;
+    margin: auto 0 0;
+    border-radius: 28px 28px 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    animation: sheet-up 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .sheet-body {
+    padding: 20px 20px 24px;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(48px);
+    opacity: 0.6;
+  }
 }
 
 dialog.sheet::backdrop {

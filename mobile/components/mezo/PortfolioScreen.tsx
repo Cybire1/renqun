@@ -8,8 +8,8 @@ import Animated, { FadeIn, FadeInDown, FadeOut, LinearTransition } from 'react-n
 import { PressableScale, haptic } from '../../lib/motion';
 import { fonts } from '../../lib/theme';
 import { lift, mz, r, type } from '../../lib/mezo/theme';
-import { clock, hhmm, musd, usd0 } from '../../lib/mezo/format';
-import { friendlyError, isPriceMove, quoteCashOut, txClaim, txRedeem, type Position } from '../../lib/mezo/client';
+import { clock, hhmm, musd, timeWords, usd0 } from '../../lib/mezo/format';
+import { friendlyError, isPriceMove, positionLine, quoteCashOut, roundName, txClaim, txRedeem, type Position } from '../../lib/mezo/client';
 import { refreshMezo, useMezoAddress, useNow, usePositions, useSpot } from '../../lib/mezo/hooks';
 import { TxRevertedError, sendTx } from '../../lib/mezo/wallet';
 import { Skeleton } from '../Skeleton';
@@ -183,8 +183,11 @@ function Stat({ label, value, strong }: { label: string; value: string | null; s
 
 function callText(p: Position): string {
   const m = p.market;
-  if (p.side === 'up') return `Above ${usd0(m.strike)}`;
-  if (p.side === 'down') return `At or below ${usd0(m.strike)}`;
+  const line = positionLine(p);
+  // A "later today" question reads as the question and its answer.
+  if (m.cadence === '1d' && line != null) return `${p.side === 'up' ? 'Yes' : 'No'} · above ${usd0(line)} at ${timeWords(m.expiry)}`;
+  if (p.side === 'up' && line != null) return `Above ${usd0(line)}`;
+  if (p.side === 'down' && line != null) return `At or below ${usd0(line)}`;
   return `${usd0(Number(p.lower * m.tickSize) / 1e9)} – ${usd0(Number(p.higher * m.tickSize) / 1e9)}`;
 }
 
@@ -204,7 +207,7 @@ function PositionRow({
   const m = p.market;
   const left = m.expiry - now;
   const live = p.open && m.status === 'live';
-  const round = m.cadence === '1h' ? 'Hourly' : '5-minute';
+  const round = roundName(m.cadence);
 
   // right-hand side: where it stands, or how it ended
   let headline: string;
@@ -233,7 +236,7 @@ function PositionRow({
     sub = won ? (p.open ? 'ready to collect' : 'collected') : 'lost';
   }
 
-  const when = live ? `${round} · closes ${hhmm(m.expiry)}` : m.settlement != null ? `Closed ${hhmm(m.expiry)} at ${usd0(m.settlement)}` : `${round} · ${hhmm(m.expiry)}`;
+  const when = live ? (m.cadence === '1d' ? 'Later today' : `${round} · closes ${hhmm(m.expiry)}`) : m.settlement != null ? `Closed ${hhmm(m.expiry)} at ${usd0(m.settlement)}` : `${round} · ${hhmm(m.expiry)}`;
 
   return (
     <View style={styles.row}>

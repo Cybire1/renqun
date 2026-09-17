@@ -108,6 +108,19 @@ export function usePoll<T>(
   return { data, error, loading, refresh };
 }
 
+/** Whether a media query matches; null until mounted, so server and client agree. */
+export function useMedia(query: string): boolean | null {
+  const [match, setMatch] = useState<boolean | null>(null);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const update = () => setMatch(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, [query]);
+  return match;
+}
+
 /** Wall clock that ticks every `ms`, for countdowns. Null until mounted, so server and client agree. */
 export function useNow(ms = 1000): number {
   const [now, setNow] = useState(0);
@@ -136,21 +149,39 @@ export function useVault(addr: Address | null) {
 /** How much more the pool can pay out right now, for the ticket's Max. */
 export const useCapacity = () => usePoll(fetchCapacity, 8_000, 'capacity');
 
-/** Live chance of Up and Down for a market (0..1 each), refreshed every few seconds. */
-export function useOdds(market: Market | null): { up: number; down: number } | null {
+/** Live chance of Up and Down (0..1 each) at a price line, the round's own line by default. */
+export function useOdds(market: Market | null, lineTick?: bigint): { up: number; down: number } | null {
+  const line = lineTick ?? market?.strikeTick;
   const { data } = usePoll(
-    market
+    market && line != null
       ? async () => {
-          const [upLo, upHi] = sideRange('up', market.strikeTick);
-          const [dnLo, dnHi] = sideRange('down', market.strikeTick);
+          const [upLo, upHi] = sideRange('up', line);
+          const [dnLo, dnHi] = sideRange('down', line);
           const [up, down] = await Promise.all([rangeChance(market.id, upLo, upHi), rangeChance(market.id, dnLo, dnHi)]);
-          return { id: market.id, up, down };
+          return { id: market.id, line, up, down };
         }
       : null,
     5_000,
-    `odds:${market?.id}`,
+    `odds:${market?.id}:${line}`,
   );
-  return data && market && data.id === market.id ? data : null;
+  return data && market && data.id === market.id && data.line === line ? data : null;
+}
+
+/** Yes chances for several price lines on one round, in one refresh. */
+export function useLineOdds(market: Market | null, ticks: bigint[]): Map<string, number> | null {
+  const key = `lines:${market?.id}:${ticks.join(',')}`;
+  const { data } = usePoll(
+    market && ticks.length
+      ? async () => {
+          const yes = await Promise.all(ticks.map((t) => rangeChance(market.id, ...sideRange('up', t))));
+          return { key, map: new Map(ticks.map((t, i) => [t.toString(), yes[i]])) };
+        }
+      : null,
+    8_000,
+    key,
+    { keepData: true },
+  );
+  return data?.map ?? null;
 }
 
 /**

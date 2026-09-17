@@ -11,7 +11,7 @@ import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { PressableScale, haptic } from '../../lib/motion';
 import { fonts } from '../../lib/theme';
 import { mz, r, type } from '../../lib/mezo/theme';
-import { hhmm, money, musd, pct, usd0 } from '../../lib/mezo/format';
+import { hhmm, money, musd, pct, timeWords, usd0 } from '../../lib/mezo/format';
 import {
   WAD,
   ENTRY_BAND,
@@ -25,6 +25,7 @@ import {
   mintedFrom,
   quoteStake,
   rememberPosition,
+  roundName,
   sideRange,
   toWad,
   tradable,
@@ -59,7 +60,8 @@ interface Placed {
 }
 
 export default function BetSheet() {
-  const params = useLocalSearchParams<{ market?: string; side?: string }>();
+  // `line` / `lineUsd`: a yes/no question at that price (from Just ask) instead of the round's Up line.
+  const params = useLocalSearchParams<{ market?: string; side?: string; line?: string; lineUsd?: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const addr = useMezoAddress();
@@ -103,16 +105,20 @@ export default function BetSheet() {
   const market = marketPoll.data && marketPoll.data.id === marketId ? marketPoll.data : null;
   // New bets stop 30 s before the close (BETTING_CUTOFF_MS); the round still settles as usual.
   const closed = market ? !bettable(market, now) : false;
-  const liveOdds = useOdds(closed ? null : market);
+  const ask = params.line != null;
+  const lineTick = ask ? BigInt(params.line!) : (market?.strikeTick ?? 0n);
+  const lineUsd = ask ? Number(params.lineUsd) : (market?.strike ?? 0);
+  const sideName = (s: Side) => (ask ? (s === 'up' ? 'Yes' : 'No') : s === 'up' ? 'Up' : 'Down');
+  const liveOdds = useOdds(closed ? null : market, ask ? lineTick : undefined);
   const odds = closed ? null : liveOdds;
   const nextRound = useMemo(
-    () => (market ? tradable(markets.data ?? [], market.cadence, now).find((m) => m.id !== market.id) ?? null : null),
-    [markets.data, market, now],
+    () => (market && !ask ? tradable(markets.data ?? [], market.cadence, now).find((m) => m.id !== market.id) ?? null : null),
+    [markets.data, market, now, ask],
   );
 
   const stake = toWad(parseFloat(amount.replace(',', '.')));
-  const [lower, upper] = market ? sideRange(side, market.strikeTick) : [0n, 0n];
-  const quoteKey = `${market?.id}:${side}:${stake}`;
+  const [lower, upper] = market ? sideRange(side, lineTick) : [0n, 0n];
+  const quoteKey = `${market?.id}:${lineTick}:${side}:${stake}`;
   const quote = usePoll(
     market && stake > 0n && !closed ? async () => ({ key: quoteKey, q: await quoteStake(market, lower, upper, stake) }) : null,
     5_000,
@@ -176,7 +182,7 @@ export default function BetSheet() {
           // A first bet sends the approval and the bet back to back: same block, no extra wait.
           if (firstBet) await broadcastTx(txApproveMusd());
         }
-        const base = { side, quantity: live.quantity, cost: live.cost, strike: market.strike, expiry: market.expiry };
+        const base = { side, quantity: live.quantity, cost: live.cost, strike: lineUsd, expiry: market.expiry };
         let receipt: Awaited<ReturnType<typeof sendTx>>;
         try {
           receipt = await sendTx(txMint(market.id, lower, upper, live.quantity, maxCost), {
@@ -208,14 +214,14 @@ export default function BetSheet() {
   const pad = { paddingBottom: Math.max(insets.bottom, 16) + 8 };
 
   if (placed) {
-    return <PlacedView placed={placed} now={now} style={pad} onDone={() => router.back()} onPortfolio={() => router.dismissTo('/(tabs)/positions')} />;
+    return <PlacedView placed={placed} now={now} ask={ask} style={pad} onDone={() => router.back()} onPortfolio={() => router.dismissTo('/(tabs)/positions')} />;
   }
 
   let blocker: string | null = null;
   if (!market) blocker = markets.loading || marketPoll.loading ? 'Loading the round…' : 'No round is open right now';
   else if (closed) blocker = 'Betting closed for this round';
   else if (lopsided) {
-    const name = side === 'up' ? 'Up' : 'Down';
+    const name = sideName(side);
     blocker = chance! > ENTRY_BAND.max ? `${name} is all but certain now` : `${name} has almost no chance now`;
   }
   else if (stake === 0n) blocker = 'Enter an amount';
@@ -242,7 +248,7 @@ export default function BetSheet() {
               scaleTo={0.97}
               accessibilityRole="radio"
               accessibilityState={{ selected: on }}
-              accessibilityLabel={`${k === 'up' ? 'Up' : 'Down'}, ${chance} chance`}
+              accessibilityLabel={`${sideName(k)}, ${chance} chance`}
               onPress={() => {
                 setSide(k);
                 setUserPicked(true);
@@ -250,8 +256,8 @@ export default function BetSheet() {
               }}
               style={[styles.side, on ? (k === 'up' ? styles.sideUpOn : styles.sideDownOn) : styles.sideOff]}
             >
-              <Tri dir={k} size={10} color={fg} />
-              <Text style={[styles.sideText, { color: fg }]}>{k === 'up' ? 'Up' : 'Down'}</Text>
+              {ask ? null : <Tri dir={k} size={10} color={fg} />}
+              <Text style={[styles.sideText, { color: fg }]}>{sideName(k)}</Text>
               <Text style={[styles.sideChance, { color: fg }]}>{chance}</Text>
             </PressableScale>
           );
@@ -261,11 +267,15 @@ export default function BetSheet() {
       {/* what you're betting on */}
       <View style={styles.head}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.title} accessibilityRole="header" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
-            {market ? `BTC ${up ? 'above' : 'at or below'} ${usd0(market.strike)}` : 'BTC · next round'}
+          <Text style={styles.title} accessibilityRole="header" numberOfLines={ask ? 2 : 1} adjustsFontSizeToFit minimumFontScale={0.8}>
+            {market
+              ? ask
+                ? `Bitcoin above ${usd0(lineUsd)} at ${timeWords(market.expiry, now)}?`
+                : `BTC ${up ? 'above' : 'at or below'} ${usd0(market.strike)}`
+              : 'BTC · next round'}
           </Text>
           <Text style={type.small}>
-            {market ? `${market.cadence === '1h' ? 'Hourly' : '5-minute'} round · closes ${hhmm(market.expiry)}` : ' '}
+            {market ? (ask ? "Yes pays if it is, No if it isn't." : `${roundName(market.cadence)} round · closes ${hhmm(market.expiry)}`) : ' '}
           </Text>
         </View>
         {market ? <Countdown msLeft={market.expiry - now} /> : null}
@@ -359,7 +369,7 @@ export default function BetSheet() {
         ) : (
           <SwipeToBet
             tone={up ? 'green' : 'ink'}
-            label={`Swipe to bet ${up ? 'Up' : 'Down'} · ${q ? money(Number(q.cost) / 1e18) : amount}`}
+            label={`Swipe to bet ${sideName(side)} · ${q ? money(Number(q.cost) / 1e18) : amount}`}
             busy={busy !== null}
             busyLabel={busy ?? 'Placing…'}
             disabled={!q || !fresh || busy !== null}
@@ -379,12 +389,14 @@ export default function BetSheet() {
 function PlacedView({
   placed,
   now,
+  ask,
   style,
   onDone,
   onPortfolio,
 }: {
   placed: Placed;
   now: number;
+  ask: boolean;
   style: object;
   onDone: () => void;
   onPortfolio: () => void;
@@ -404,12 +416,12 @@ function PlacedView({
           {placed.confirmed ? "You're in" : 'Placing your bet'}
         </Animated.Text>
         <Animated.Text entering={FadeInDown.delay(140)} style={styles.placedBody}>
-          {up ? 'Up' : 'Down'} pays <Text style={{ fontFamily: fonts.bodySemi, color: mz.ink }}>{musd(placed.quantity)} MUSD</Text> if BTC is{' '}
-          {up ? 'above' : 'at or below'} {usd0(placed.strike)} at {hhmm(placed.expiry)}.
+          {ask ? (up ? 'Yes' : 'No') : up ? 'Up' : 'Down'} pays <Text style={{ fontFamily: fonts.bodySemi, color: mz.ink }}>{musd(placed.quantity)} MUSD</Text> if Bitcoin is{' '}
+          {up ? 'above' : 'at or below'} {usd0(placed.strike)} at {ask ? timeWords(placed.expiry, now) : hhmm(placed.expiry)}.
         </Animated.Text>
         <Animated.View entering={FadeInDown.delay(200)} style={styles.placedMeta}>
           <Countdown msLeft={placed.expiry - now} />
-          <Text style={type.small}>{placed.confirmed ? `Paid ${musd(placed.cost)} MUSD` : 'Confirming on Mezo…'}</Text>
+          <Text style={type.small}>{placed.confirmed ? `Paid ${musd(placed.cost)} MUSD with the fee` : 'Confirming on Mezo…'}</Text>
         </Animated.View>
         <PressableScale haptic="light" onPress={() => Linking.openURL(explorerTx(placed.hash))} accessibilityRole="link" style={styles.explorer}>
           <Text style={styles.link}>View on the Mezo explorer</Text>

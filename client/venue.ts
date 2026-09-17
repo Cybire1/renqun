@@ -116,10 +116,43 @@ export interface Market {
   settlementRaw: bigint;
 }
 
-export function cadenceOf(tickSize: bigint, expiryMs: number): Cadence {
-  // The keeper opens 5-minute rounds on a $10 grid and hourly ones on $25.
+export function cadenceOf(tickSize: bigint, _expiryMs?: number): Cadence {
+  // The keeper opens 5-minute rounds on a $10 grid, hourly ones on $25, and one "later today" round
+  // per pool period on $50 (it closes when the period ends; the apps ask yes/no questions on it).
   if (tickSize <= 10n * F) return '5m';
-  return expiryMs % 86_400_000 === 0 ? '1d' : '1h';
+  if (tickSize <= 25n * F) return '1h';
+  return '1d';
+}
+
+/** How a round is named on screen. */
+export const roundName = (c: Cadence) => (c === '5m' ? '5-minute' : c === '1h' ? 'Hourly' : 'Later today');
+
+/**
+ * Round-number prices near spot for plain yes/no questions on a "later today" round ("Will Bitcoin
+ * be above $77,000 at 7:00 PM?"). Yes pays above the price, No at or below it. Only prices inside
+ * the round's grid come back, lowest first.
+ */
+export function questionLines(market: Market, spotUsd: number, count = 3): { tick: bigint; usd: number }[] {
+  const step = spotUsd >= 20_000 ? 500 : spotUsd >= 2_000 ? 50 : 5;
+  const base = Math.round(spotUsd / step) * step;
+  const offsets = [0, step, -step, 2 * step, -2 * step, 3 * step, -3 * step];
+  const out: { tick: bigint; usd: number }[] = [];
+  for (const off of offsets) {
+    const usd = base + off;
+    const tick = usdToTick(usd, market.tickSize);
+    if (tickToUsd(tick, market.tickSize) !== usd) continue; // not on the grid
+    if (tick <= market.minTick || tick >= market.maxTick) continue;
+    out.push({ tick, usd });
+    if (out.length === count) break;
+  }
+  return out.sort((a, b) => a.usd - b.usd);
+}
+
+/** The price a directional position is about: above `line` (up) or at or below it (down). */
+export function positionLine(p: { side: Side | 'range'; lower: bigint; higher: bigint; market: Market }): number | null {
+  if (p.side === 'up') return tickToUsd(p.lower, p.market.tickSize);
+  if (p.side === 'down') return tickToUsd(p.higher, p.market.tickSize);
+  return null;
 }
 
 export const tickToUsd = (tick: bigint, tickSize: bigint) => Number(tick * tickSize) / 1e9;

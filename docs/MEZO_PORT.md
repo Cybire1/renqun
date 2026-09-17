@@ -17,7 +17,7 @@ Started 2026-09-16.
 | Venue: markets, range digitals, settlement, LP vault | **Done (v1)** | `contracts/src/YosukuPredict.sol` |
 | Exposure index (`strike_payout_tree` analog) | **Done** | `contracts/src/lib/LiabilityTree.sol` |
 | Deploy script (testnet/mainnet) | **Done**, simulated against live testnet | `contracts/script/Deploy.s.sol` |
-| Keeper (markets, vol, settle, epochs) | **Done (v1)**, running against testnet (5-minute and hourly rounds) | `services/keeper/keeper.mjs` |
+| Keeper (markets, vol, settle, epochs) | **Done (v1)**, running against testnet (5-minute, hourly, and one "later today" round per pool epoch) | `services/keeper/keeper.mjs` |
 | Starter drip (gas for every player, test MUSD on testnet) | **Done (v1)**, running against testnet; mainnet needs attestation | `services/drip/drip.mjs` |
 | Shared client (`@renqun/client`) | **Done** | `client/`: network, venue reads and tx builders, formatting, drip client |
 | Web app (wallet, markets, ticket, portfolio, Earn, Add MUSD) | **Done (v1)**, tested end to end on testnet | `web/`; see §6 |
@@ -65,6 +65,17 @@ Started 2026-09-16.
 | resolution period 1 min | `settleWindow` 60 s |
 | AccountWrapper + Auth hot-potato | plain ERC-20 approve + `mint` |
 | sponsored gas (Enoki / Onara) | not yet; Mezo gas is ~$0.002/tx in BTC (see §8) |
+
+### Later-today rounds and yes/no questions (2026-09-17)
+
+The keeper opens one round per pool epoch that closes when the epoch ends (18:00 UTC is the next on
+testnet's 6-hour epochs; midnight UTC on mainnet's daily ones), on a $50 grid (±$6,400). A market
+cannot outlive its epoch (`_createMarket` requires `expiry <= epochEnd`), so questions days ahead
+need a contract change. Clients classify rounds by grid size: $10 → 5-minute, $25 → hourly,
+$50 → later today (`cadenceOf`). Each later-today round carries several questions at round-number
+prices near spot (`questionLines`): Yes buys `(tick, +∞)`, No buys `(0, tick]`, priced by
+`rangePriceOf` like any range. Rounds closing in the same second (5-minute, hourly and later
+today at an epoch end) now settle in parallel so all three land inside the 60 s window.
 
 ### Deliberate deviations from DeepBook
 
@@ -208,6 +219,7 @@ Next). Every page is static; all data comes from Mezo in the browser.
 | Shared client | `client/` | the app's tested Mezo logic (`venue.ts`, `network.ts`, `format.ts`, `funding.ts`) with browser storage (`storage.ts`) and `NEXT_PUBLIC_*` settings |
 | Wallets | `web/lib/wallet.tsx` | EIP-6963 discovery (any installed EVM wallet, with its own name and icon; `window.ethereum` as a fallback), silent reconnect, switch to Mezo and add the network when the wallet has never seen it (4902), sends with the same simulate → padded gas → receipt polling as the app; on testnet a wallet with no gas asks the drip |
 | Live data | `web/lib/hooks.ts` | polling that pauses in background tabs, one refresh for everything after a transaction |
+| Just ask | `web/components/WordMarkets.tsx` | plain yes/no questions ("Will Bitcoin be above $77,000 at 7:00 PM?") at round-number prices near spot on the later-today round; Yes is the range above the price, No at or below it; a pick opens the ticket in a dialog |
 | Markets | `web/components/Markets.tsx`, `Chart.tsx` | 5 min / 1 hour, the round's question, live oracle price, SVG chart green above the Up line and grey below, progress, just-closed result, last rounds, up next |
 | Ticket | `web/components/Ticket.tsx` | the app's rules: fresh quote, entry band, pool capacity, 30 s cutoff, 3¢ price-move bound with two re-quotes, confirmation from the `Minted` event; a first bet asks the wallet to allow MUSD, then to bet |
 | Portfolio | `web/components/Portfolio.tsx` | in play, could pay, collect all, open (winning/behind, cash out) and settled rows |
@@ -242,6 +254,7 @@ relative to `mobile/`.
 | Live data | `lib/mezo/hooks.ts` | focus- and app-state-aware polling, `refreshMezo()` after a tx |
 | Skin | `lib/mezo/theme.ts` | canvas palette and contrast rules |
 | Brand | `components/RenqunMark.tsx`, `scripts/renqun-icons.cjs`, `app.json` | the Mezo app is named **Renqun** (人群, "crowd"). The mark is three 人 stacked into 众 with a red head; the script renders the iOS icon, splash and Android icons from the same geometry. Storage keys and the bundle id keep their earlier names so existing test installs and wallets carry over. Design sources: `design/renqun-logo` |
+| Just ask | `components/mezo/JustAsk.tsx`, `app/mezo/bet.tsx` (`line`, `lineUsd` params) | the same yes/no questions on Markets; the bet sheet shows the question and Yes / No |
 | Tab bar | `components/mezo/MezoTabBar.tsx` | white dock with four tabs (the open one widens into a sand pill with its name) and the red bet button beside it, ringed by the current 5-minute round's countdown |
 | Markets tab | `components/mezo/MarketsScreen.tsx` | 5 min / 1 hour, live chart from Mezo's oracle, odds, UP / DOWN, last result, up next |
 | Bet sheet | `app/mezo/bet.tsx` | side, amount + chips (opens on what the wallet can pay), live quote, swipe to bet, confirmation. Betting closes 30 s before a round ends (`BETTING_CUTOFF_MS`); a side outside the 1–99% band or a stake above the pool's free capacity is refused before the swipe, with a button to the next round. The first bet sends its approval in the same swipe. The sheet turns into "Placing your bet" at broadcast and "You're in" at the receipt, showing what the `Minted` event charged. The dock's bet button opens the soonest round with more than two minutes left and follows the best round until the player picks one |

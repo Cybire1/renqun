@@ -201,21 +201,39 @@ export function useVault(addr: Address | null) {
   return usePoll<Vault>(addr ? () => fetchVault(addr) : null, 20_000, `vault:${addr}`);
 }
 
-/** Live chance of UP and DOWN for a market (0..1 each), refreshed every few seconds. */
-export function useOdds(market: Market | null): { up: number; down: number } | null {
+/** Live chance of UP and DOWN (0..1 each) at a price line, the round's own line by default. */
+export function useOdds(market: Market | null, lineTick?: bigint): { up: number; down: number } | null {
+  const line = lineTick ?? market?.strikeTick;
   const { data } = usePoll(
-    market
+    market && line != null
       ? async () => {
-          const [upLo, upHi] = sideRange('up', market.strikeTick);
-          const [dnLo, dnHi] = sideRange('down', market.strikeTick);
+          const [upLo, upHi] = sideRange('up', line);
+          const [dnLo, dnHi] = sideRange('down', line);
           const [up, down] = await Promise.all([rangeChance(market.id, upLo, upHi), rangeChance(market.id, dnLo, dnHi)]);
-          return { id: market.id, up, down };
+          return { id: market.id, line, up, down };
         }
       : null,
     5_000,
-    `odds:${market?.id}`,
+    `odds:${market?.id}:${line}`,
   );
-  return data && market && data.id === market.id ? data : null;
+  return data && market && data.id === market.id && data.line === line ? data : null;
+}
+
+/** Yes chances for several price lines on one round, in one refresh. */
+export function useLineOdds(market: Market | null, ticks: bigint[]): Map<string, number> | null {
+  const key = `lines:${market?.id}:${ticks.join(',')}`;
+  const { data } = usePoll(
+    market && ticks.length
+      ? async () => {
+          const yes = await Promise.all(ticks.map((t) => rangeChance(market.id, ...sideRange('up', t))));
+          return { key, map: new Map(ticks.map((t, i) => [t.toString(), yes[i]])) };
+        }
+      : null,
+    8_000,
+    key,
+    { keepData: true },
+  );
+  return data?.map ?? null;
 }
 
 /**

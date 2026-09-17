@@ -2,8 +2,9 @@
 // design/mezo-canvas.
 //
 // Colour rules (contrast-checked):
-//   • One red. Mezo off-red #FF004D marks identity and your next action: fills with BLACK labels
-//     (5.4:1; white is 3.9:1 and fails), strike lines, headline type (≥ 24pt).
+//   • One red. Mezo off-red #FF004D marks identity and your next action: fills with white labels
+//     (the owner's choice; 3.9:1, so keep them semibold and 15pt or larger), strike lines, headline
+//     type (≥ 24pt).
 //   • Small words are ink or grey. When one needs the accent, the red becomes a shape.
 //   • Up and Down are soft: light fills (mint, warm grey) with a deeper arrow or word on top
 //     (#03703C, #48423D). No solid black or green blocks.
@@ -49,7 +50,7 @@ export const mz = {
   downText: '#48423D',
   downThumb: '#6E6660',
 
-  onRed: '#000000',
+  onRed: '#FFFFFF',
   onGreen: '#0B0B0B',
   onInk: '#FFFFFF',
   scrim: 'rgba(12,12,12,0.45)',

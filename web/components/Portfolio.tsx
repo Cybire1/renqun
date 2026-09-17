@@ -9,6 +9,9 @@ import {
   hhmm,
   isPriceMove,
   musd,
+  positionLine,
+  roundName,
+  timeWords,
   quoteCashOut,
   txClaim,
   txRedeem,
@@ -164,8 +167,11 @@ export function Portfolio() {
 
 function callText(p: Position): string {
   const m = p.market;
-  if (p.side === 'up') return `Above ${usd0(m.strike)}`;
-  if (p.side === 'down') return `At or below ${usd0(m.strike)}`;
+  const line = positionLine(p);
+  // A "later today" question reads as the question and its answer.
+  if (m.cadence === '1d' && line != null) return `${p.side === 'up' ? 'Yes' : 'No'} · above ${usd0(line)} at ${timeWords(m.expiry)}`;
+  if (p.side === 'up' && line != null) return `Above ${usd0(line)}`;
+  if (p.side === 'down' && line != null) return `At or below ${usd0(line)}`;
   return `${usd0(Number(p.lower * m.tickSize) / 1e9)} – ${usd0(Number(p.higher * m.tickSize) / 1e9)}`;
 }
 
@@ -173,7 +179,7 @@ function Row({ p, now, spotUsd, busy, onCashOut }: { p: Position; now: number; s
   const m = p.market;
   const left = m.expiry - now;
   const live = p.open && m.status === 'live';
-  const round = m.cadence === '1h' ? 'Hourly' : '5-minute';
+  const round = roundName(m.cadence);
 
   let headline: string;
   let color = 'var(--ink)';
@@ -202,7 +208,9 @@ function Row({ p, now, spotUsd, busy, onCashOut }: { p: Position; now: number; s
   }
 
   const when = live
-    ? `${round} · closes ${hhmm(m.expiry)}`
+    ? m.cadence === '1d'
+      ? 'Later today'
+      : `${round} · closes ${hhmm(m.expiry)}`
     : m.settlement != null
       ? `Closed ${hhmm(m.expiry)} at ${usd0(m.settlement)}`
       : `${round} · ${hhmm(m.expiry)}`;
