@@ -190,26 +190,34 @@ export function useLineOdds(market: Market | null, ticks: bigint[]): Map<string,
  */
 export function useSpotSeries(minutes: number): { series: SpotPoint[]; spot: SpotPoint | null } {
   const [series, setSeries] = useState<SpotPoint[]>([]);
+  const held = useRef<SpotPoint[]>([]);
+  const lastHistory = useRef(0);
   const windowMs = minutes * 60_000;
-  const historyLoaded = useRef(false);
 
   useEffect(() => {
-    historyLoaded.current = false;
+    held.current = [];
+    lastHistory.current = 0;
     setSeries([]);
   }, [minutes]);
 
   usePoll(
     async () => {
-      // History is retried until it lands, so a failed first read never leaves a stub chart.
-      if (!historyLoaded.current) {
+      const now = Date.now();
+      const cur = held.current;
+      const covered = cur.length > 1 ? cur[cur.length - 1].t - cur[0].t : 0;
+      // Refill from the oracle whenever the window is mostly empty: the first load, a failed read, or
+      // a tab that sat in the background long enough for its prints to age out of the round.
+      if ((cur.length < 8 || covered < windowMs * 0.6) && now - lastHistory.current > 10_000) {
+        lastHistory.current = now;
         const h = await fetchSpotHistory(minutes).catch(() => null);
         if (h && h.length > 4) {
-          historyLoaded.current = true;
-          setSeries((cur) => merge(h, cur, windowMs));
+          held.current = merge(h, held.current, windowMs);
+          setSeries(held.current);
         }
       }
       const p = await fetchSpot();
-      setSeries((cur) => merge(cur, [p], windowMs));
+      held.current = merge(held.current, [p], windowMs);
+      setSeries(held.current);
       return p;
     },
     4_000,
