@@ -179,7 +179,7 @@ export function Ticket({
     }
   };
 
-  const shell = plain ? 'ticket plain' : 'card ticket area-ticket';
+  const shell = plain ? 'ticket plain' : 'card ticket';
 
   if (placed) {
     return (

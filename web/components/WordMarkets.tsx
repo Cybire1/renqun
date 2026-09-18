@@ -13,7 +13,7 @@ interface Question {
   line: { tick: bigint; usd: number };
 }
 
-export function WordMarkets({ markets, spotUsd, now }: { markets: Market[]; spotUsd: number | null; now: number }) {
+export function WordMarkets({ markets, spotUsd, now, heading = true }: { markets: Market[]; spotUsd: number | null; now: number; heading?: boolean }) {
   const round = useMemo(() => markets.filter((m) => m.cadence === '1d' && bettable(m, now)).sort((a, b) => a.expiry - b.expiry)[0] ?? null, [markets, now]);
 
   // Keep the same questions while the price wanders near a boundary; move them once it has clearly left.
@@ -33,13 +33,17 @@ export function WordMarkets({ markets, spotUsd, now }: { markets: Market[]; spot
   });
 
   return (
-    <section className="ask" aria-labelledby="ask-h">
-      <div className="ask-head">
-        <h2 className="ask-title" id="ask-h">
-          Just ask
-        </h2>
-        <p className="body">No chart to read. Will Bitcoin be above a price later today? Answer yes or no.</p>
-      </div>
+    <section className={heading ? 'ask' : 'ask embedded'} aria-labelledby={heading ? 'ask-h' : undefined}>
+      {heading ? (
+        <div className="ask-head">
+          <h2 className="ask-title" id="ask-h">
+            Just ask
+          </h2>
+          <p className="body">No chart to read. Will Bitcoin be above a price later today? Answer yes or no.</p>
+        </div>
+      ) : (
+        <p className="body ask-lede">No chart to read. Will Bitcoin be above a price later today? Answer yes or no.</p>
+      )}
 
       <div className="ask-sub">
         <h3 className="heading">Later today</h3>

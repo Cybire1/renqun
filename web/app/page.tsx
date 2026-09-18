@@ -1,5 +1,5 @@
-import { Markets } from '@/components/Markets';
+import { Landing } from '@/components/Landing';
 
 export default function Home() {
-  return <Markets />;
+  return <Landing />;
 }

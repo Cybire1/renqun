@@ -10,7 +10,7 @@ import { Button, Glyph } from './ui';
 import { useFunds } from './Providers';
 
 const NAV = [
-  { href: '/', label: 'Markets' },
+  { href: '/markets', label: 'Markets' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/earn', label: 'Earn' },
 ];

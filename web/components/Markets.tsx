@@ -10,6 +10,8 @@ import {
   clock,
   hhmm,
   inRange,
+  inWords,
+  musd,
   liveRounds,
   pays,
   pct,
@@ -19,7 +21,9 @@ import {
   type Market,
   type Side,
 } from '@renqun/client';
-import { useMarkets, useMedia, useNow, useOdds, useSpotSeries } from '@/lib/hooks';
+import { useMarkets, useMedia, useNow, useOdds, useSpotSeries, useVault } from '@/lib/hooks';
+import { zeroAddress } from 'viem';
+import Link from 'next/link';
 import { Chart } from './Chart';
 import { Ticket } from './Ticket';
 import { WordMarkets } from './WordMarkets';
@@ -206,6 +210,7 @@ export function Markets() {
         </div>
 
         {MEZO_PREDICT_LIVE && narrow === false ? (
+          <div className="area-ticket ticket-column">
           <Ticket
             market={ticketMarket}
             side={side}
@@ -215,6 +220,8 @@ export function Markets() {
             nextRound={nextBettable}
             onPickNext={(m) => setPickedId(m.id)}
           />
+          <PoolCard now={now} />
+          </div>
         ) : null}
 
         {MEZO_PREDICT_LIVE && narrow ? (
@@ -260,6 +267,34 @@ export function Markets() {
 
       {MEZO_PREDICT_LIVE && now ? <WordMarkets markets={markets.data ?? []} spotUsd={spot?.usd ?? null} now={now} /> : null}
     </div>
+  );
+}
+
+/** What the pool can still cover, under the ticket: the other side of every bet you place. */
+function PoolCard({ now }: { now: number }) {
+  const vault = useVault(zeroAddress);
+  const v = vault.data;
+  const pctOf = (x: bigint) => (v && v.nav > 0n ? Math.min(100, Number((x * 10_000n) / v.nav) / 100) : 0);
+  return (
+    <aside className="card pool-card" aria-label="The pool behind these rounds">
+      <div className="line">
+        <span className="label">The pool takes the other side</span>
+      </div>
+      <div className="line">
+        <span className="strong">{v ? musd(v.nav) : '—'} MUSD</span>
+        <Link className="link" href="/earn">
+          Earn
+        </Link>
+      </div>
+      <div className="meter" aria-hidden>
+        <span style={{ width: `${pctOf(v?.atRisk ?? 0n)}%` }} />
+        <i style={{ left: `${v ? pctOf(v.cap) : 50}%` }} />
+      </div>
+      <div className="line">
+        <span className="small">{v ? `${musd(v.atRisk)} at risk` : ' '}</span>
+        <span className="small">{v && now ? `updates ${hhmm(v.nextRoll)} · in ${inWords(v.nextRoll - now)}` : ' '}</span>
+      </div>
+    </aside>
   );
 }
 
