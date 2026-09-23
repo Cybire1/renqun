@@ -18,7 +18,7 @@ import {
 } from '@renqun/client';
 import { useBalances, useNow, useVault } from '@/lib/hooks';
 import { declined, useWallet } from '@/lib/wallet';
-import { Button, Glyph, Segmented, Skeleton } from './ui';
+import { Button, Segmented, Skeleton } from './ui';
 import { useFunds } from './Providers';
 
 type Mode = 'deposit' | 'withdraw';
@@ -79,64 +79,98 @@ export function Earn() {
   const pending = !!address && !!v && (v.queuedDeposit > 0n || v.queuedWithdrawShares > 0n || v.claimableDeposits.length > 0 || v.claimableWithdrawals.length > 0);
 
   return (
-    <div className="shell page">
+    <>
+      <div className="shell">
+        <div className="pf-head">
+          <div>
+            <span className="eyebrow pf-live">
+              <i aria-hidden />
+              Earn · the MUSD pool
+            </span>
+            <h1 className="title pf-title">Be the other side of every bet.</h1>
+          </div>
+        </div>
+      </div>
+
+      {/* The same four-figure band as the portfolio: what the pool holds, drawn against its risk. */}
+      <section className="pf-band" aria-label="The pool right now">
+        <div className="shell pf-band-inner">
+          <div className="pf-fig wide">
+            <span className="pf-k">In the pool</span>
+            <span className="pf-v">
+              {v ? musd(v.nav) : <Skeleton width={140} height={40} />}
+              <em>MUSD</em>
+            </span>
+            <span
+              className="stat-meter"
+              role="img"
+              aria-label={v ? `${musd(v.atRisk)} MUSD at risk, limit ${musd(v.cap)}` : 'Loading'}
+            >
+              <i style={{ width: `${Math.max(riskPct, riskPct > 0 ? 1.5 : 0)}%` }} />
+              <b style={{ left: `${capPct}%` }} />
+            </span>
+            <span className="pf-note">{v ? `${musd(v.atRisk)} at risk · never more than ${capPct.toFixed(0)}%` : ' '}</span>
+          </div>
+
+          <div className="pf-fig">
+            <span className="pf-k">Your share</span>
+            <span className="pf-v">{!address ? '—' : v ? musdNearest(v.value) : <Skeleton width={90} height={30} />}</span>
+            <span className="pf-note">
+              {!address ? 'connect a wallet to see it' : v && v.shares > 0n ? `${share.toFixed(share < 1 ? 2 : 1)}% of the pool` : 'nothing in the pool yet'}
+            </span>
+          </div>
+
+          <div className="pf-fig">
+            <span className="pf-k">At risk now</span>
+            <span className="pf-v">{v ? musd(v.atRisk) : <Skeleton width={90} height={30} />}</span>
+            <span className="pf-note">{v ? `limit ${musd(v.cap)}` : ' '}</span>
+          </div>
+
+          <div className="pf-fig">
+            <span className="pf-k">Next update</span>
+            <span className="pf-v">{nextAt}</span>
+            <span className="pf-note">{v && now ? `in ${inWords(v.nextRoll - now)} · requests price then` : ' '}</span>
+          </div>
+        </div>
+      </section>
+
+      <div className="shell page">
       <div className="earn">
         <div>
-          <div className="earn-lede">
-            <span className="label">Earn · MUSD pool</span>
-            <h1>Be the other side of every bet.</h1>
-            <p className="body">
-              Your MUSD backs every bet on Renqun. The pool keeps the stakes and fees from losing bets and pays the winners. Open bets can never
-              promise more than half of it.
-            </p>
-          </div>
-
-          <div className="tiles">
-            <div className="stat">
-              <div className="label">Pool</div>
-              <div className="stat-value">{v ? <>{musd(v.nav)}<span className="unit">MUSD</span></> : <Skeleton width={120} height={30} />}</div>
-            </div>
-            <div className="stat">
-              <div className="label">Your share</div>
-              <div className="stat-value">
-                {!address ? '—' : v ? <>{musdNearest(v.value)}<span className="unit">MUSD</span></> : <Skeleton width={100} height={30} />}
+          <h2 className="earn-how-title">How the pool earns</h2>
+          <ol className="how-list">
+            <li>
+              <span className="how-n mono">01</span>
+              <div>
+                <h3>Every losing bet stays in the pool</h3>
+                <p className="body">The pool takes the other side of every round. It keeps the stake and the 1% fee from each losing bet and pays the winners.</p>
               </div>
-              {address && v && v.shares > 0n ? <div className="small">{share.toFixed(share < 1 ? 2 : 1)}% of the pool</div> : null}
-            </div>
-            <div className="stat">
-              <div className="label">At risk now</div>
-              <div className="stat-value">{v ? <>{musd(v.atRisk)}<span className="unit">MUSD</span></> : <Skeleton width={100} height={30} />}</div>
-              {v ? <div className="small">limit {musd(v.cap)}</div> : null}
-            </div>
-          </div>
-
-          <section className="card" style={{ marginTop: 12, padding: 22 }}>
-            <div className="rule" aria-hidden />
-            <div className="line" style={{ marginTop: 16 }}>
-              <span className="strong">Risk right now</span>
-              <span className="small">worst case across every open bet</span>
-            </div>
-            <div className="meter" role="img" aria-label={v ? `${musd(v.atRisk)} MUSD at risk, limit ${musd(v.cap)}` : 'Loading'}>
-              <span style={{ width: `${Math.max(riskPct, riskPct > 0 ? 1.5 : 0)}%` }} />
-              <i style={{ left: `${capPct}%` }} />
-            </div>
-            <div className="line" style={{ marginTop: 8 }}>
-              <span className="small">{v ? `${musd(v.atRisk)} at risk` : ' '}</span>
-              <span className="small">limit {capPct.toFixed(0)}% of the pool</span>
-            </div>
-            <hr className="divider" style={{ margin: '18px 0' }} />
-            <div className="update">
-              <span className="clock-tile">
-                <Glyph name="clock" size={20} />
-              </span>
-              <div style={{ flex: 1 }}>
-                <div className="strong">Next pool update {nextAt}</div>
-                <div className="small">
-                  {v && now ? `in ${inWords(v.nextRoll - now)} · ` : ''}deposits and withdrawals are priced then, once every round in the window has settled
-                </div>
+            </li>
+            <li>
+              <span className="how-n mono">02</span>
+              <div>
+                <h3>Never more than half at risk</h3>
+                <p className="body">Open bets can never promise more than half of the pool. A bet that would push past that is refused.</p>
               </div>
-            </div>
-          </section>
+            </li>
+            <li>
+              <span className="how-n mono">03</span>
+              <div>
+                <h3>Priced when the window settles</h3>
+                <p className="body">
+                  Deposits and withdrawals queue until the next update at {nextAt}, when every round in the window has closed, so nobody joins or
+                  leaves at a stale price.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span className="how-n mono">04</span>
+              <div>
+                <h3>Withdrawals are never paused</h3>
+                <p className="body">Pausing the venue stops new bets and deposits. Withdrawals and payouts always go through.</p>
+              </div>
+            </li>
+          </ol>
         </div>
 
         <aside className="card move" aria-label="Deposit or withdraw">
@@ -232,6 +266,7 @@ export function Earn() {
           ) : null}
         </aside>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

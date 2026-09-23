@@ -74,8 +74,14 @@ export function Markets() {
 
   return (
     <div className="shell page">
-      <div className="page-head">
-        <h1 className="title">Bitcoin</h1>
+      <div className="pf-head mk-head">
+        <div>
+          <span className="eyebrow pf-live">
+            <i aria-hidden />
+            Rounds every five minutes and every hour
+          </span>
+          <h1 className="title pf-title">Bitcoin</h1>
+        </div>
         <Segmented
           label="Round length"
           items={CADENCES.map((c) => ({ key: c.key, label: c.label }))}
@@ -265,7 +271,19 @@ export function Markets() {
         </Sheet>
       ) : null}
 
-      {MEZO_PREDICT_LIVE && now ? <WordMarkets markets={markets.data ?? []} spotUsd={spot?.usd ?? null} now={now} /> : null}
+      {MEZO_PREDICT_LIVE && now ? (
+        <section className="mk-ask" aria-labelledby="ask-h">
+          <div className="band-head">
+            <div>
+              <h2 className="band-title" id="ask-h">
+                Or just ask.
+              </h2>
+              <p className="band-lede">No chart to read. Will Bitcoin be above a price later today? Answer yes or no.</p>
+            </div>
+          </div>
+          <WordMarkets markets={markets.data ?? []} spotUsd={spot?.usd ?? null} now={now} heading={false} />
+        </section>
+      ) : null}
     </div>
   );
 }

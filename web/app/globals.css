@@ -3651,3 +3651,113 @@ dialog.sheet::backdrop {
 .band .ask.embedded .ask-grid {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
+
+/* ── earn: the four-figure band over a numbered account of how the pool earns ── */
+
+.earn {
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 72px;
+  padding-top: 20px;
+}
+
+.earn-how-title {
+  margin: 0 0 8px;
+  font: 700 clamp(26px, 2.6vw, 34px) / 1.1 var(--font-display);
+  letter-spacing: -1px;
+  color: var(--black);
+}
+
+.how-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.how-list li {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 20px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.how-list li:last-child {
+  border-bottom: 0;
+}
+
+.how-n {
+  padding-top: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--red);
+}
+
+.how-list h3 {
+  margin: 0 0 8px;
+  font: 600 20px/1.3 var(--font-display);
+  letter-spacing: -0.5px;
+  color: var(--black);
+}
+
+.how-list .body {
+  font-size: 16px;
+  line-height: 27px;
+  max-width: 48ch;
+}
+
+/* the ticket stays in reach while the reasons scroll past it */
+.earn .move {
+  position: sticky;
+  top: 110px;
+}
+
+@media (max-width: 980px) {
+  .earn {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .earn .move {
+    position: static;
+    order: -1;
+  }
+}
+
+/* ── markets: the portfolio's head, and "Just ask" with the landing's section head ── */
+
+.mk-head {
+  align-items: flex-end;
+}
+
+.mk-ask {
+  margin-top: 88px;
+  padding-top: 72px;
+  border-top: 1px solid var(--hairline);
+}
+
+.mk-ask .band-head {
+  margin-bottom: 44px;
+}
+
+.mk-ask .ask.embedded .ask-grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+.mk-ask .ask.embedded .ask-card {
+  padding: 30px;
+  border-radius: 28px;
+}
+
+@media (max-width: 720px) {
+  .mk-ask {
+    margin-top: 56px;
+    padding-top: 48px;
+  }
+}
+
+/* the figure cells align their children to the start, which would shrink the meter to nothing */
+.pf-fig .stat-meter {
+  width: 100%;
+  max-width: 360px;
+}
