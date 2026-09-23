@@ -53,4 +53,4 @@ Optional env: `ADMIN`, `KEEPER`, `TREASURY`, `EPOCH_LENGTH`. After deploying, ru
 ## Licensing
 
 `FixedMath.sol` and `SviPricing.sol` are ports of Mysten Labs' DeepBook Predict (Apache-2.0) and
-keep that license. The rest is MIT.
+keep that license (see [`NOTICE`](NOTICE) and [`LICENSE-APACHE`](LICENSE-APACHE)). The rest is MIT.

@@ -73,3 +73,8 @@ Never commit keys. The keeper and drip read them from the environment only.
 An audit, exact-timestamp settlement, a short-dated volatility source, redundant keepers, device
 attestation in front of the drip, and legal review. Details in
 [`docs/MEZO_PORT.md` §8](docs/MEZO_PORT.md#8-before-mainnet).
+
+## License
+
+MIT, except the DeepBook Predict ports in `contracts/`, which stay under Apache-2.0 — see
+[`contracts/NOTICE`](contracts/NOTICE).

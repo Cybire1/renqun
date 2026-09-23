@@ -1,0 +1,15 @@
+Renqun contracts
+
+The files below are derived from DeepBook Predict by Mysten Labs, Inc., licensed under the
+Apache License, Version 2.0 (see LICENSE-APACHE in this directory), and remain under that
+license. Everything else in this repository is MIT (see LICENSE at the repository root).
+
+  src/math/FixedMath.sol               port of DeepBook's fixed_math (1e9 fixed-point math)
+  src/pricing/SviPricing.sol           port of DeepBook's pricing.move (SVI pricing)
+  src/pricing/SviPricer.sol            linked entry point for the SviPricing math
+  test/FixedMath.t.sol                 DeepBook's fixed_math test vectors
+  test/SviPricingReference.t.sol       DeepBook's pricing reference points
+  test/fixtures/PricingReference.sol   generated from DeepBook's pricing_reference_data.move
+  script/gen/gen_pricing_reference.py  the generator for that fixture
+
+DeepBook Predict: Copyright (c) Mysten Labs, Inc. Licensed under the Apache License, Version 2.0.
