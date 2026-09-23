@@ -34,6 +34,7 @@ export function WordMarkets({ markets, spotUsd, now, heading = true }: { markets
 
   return (
     <section className={heading ? 'ask' : 'ask embedded'} aria-labelledby={heading ? 'ask-h' : undefined}>
+      {/* Embedded in a band, the heading and lede come from the band head instead. */}
       {heading ? (
         <div className="ask-head">
           <h2 className="ask-title" id="ask-h">
@@ -41,9 +42,7 @@ export function WordMarkets({ markets, spotUsd, now, heading = true }: { markets
           </h2>
           <p className="body">No chart to read. Will Bitcoin be above a price later today? Answer yes or no.</p>
         </div>
-      ) : (
-        <p className="body ask-lede">No chart to read. Will Bitcoin be above a price later today? Answer yes or no.</p>
-      )}
+      ) : null}
 
       <div className="ask-sub">
         <h3 className="heading">Later today</h3>

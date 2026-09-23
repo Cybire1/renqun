@@ -1,7 +1,9 @@
 'use client';
-// Portfolio: what is in play and what it could pay, winnings to collect in one go, and every bet as a
-// row (live ones with where they stand right now and a cash-out).
+// Portfolio: a ledger. A band of four figures says how the day is going — what is at stake, what it
+// pays if it all lands, today's record, and what is waiting to be collected — then every bet is a
+// row with its own status stripe, aligned figures and, while it runs, the time it has left.
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import {
   clock,
   fetchSpot,
@@ -18,16 +20,20 @@ import {
   usd0,
   type Position,
 } from '@renqun/client';
-import { useNow, usePoll, usePositions } from '@/lib/hooks';
+import { useBalances, useNow, usePoll, usePositions } from '@/lib/hooks';
 import { TxRevertedError, declined, useWallet } from '@/lib/wallet';
 import { Button, EmptyState, Segmented, Skeleton, Tri } from './ui';
 
 type Tab = 'open' | 'settled';
 
+/** How long a round of this cadence runs, for the drain bar on its row. */
+const ROUND_MS = { '5m': 5 * 60_000, '1h': 60 * 60_000, '1d': 6 * 60 * 60_000 } as const;
+
 export function Portfolio() {
   const { address, send, openDialog } = useWallet();
   const now = useNow(1000);
   const positions = usePositions(address);
+  const balances = useBalances(address);
   const spot = usePoll(fetchSpot, 4_000, 'spot-now');
   const [picked, setPicked] = useState<Tab | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -38,11 +44,20 @@ export function Portfolio() {
   const settled = useMemo(() => all.filter((p) => !(p.open && p.market.status === 'live')), [all]);
   const ready = useMemo(() => all.filter((p) => p.claimable != null && p.claimable > 0n), [all]);
   const readyTotal = ready.reduce((sum, p) => sum + (p.claimable ?? 0n), 0n);
-  const wins = ready.filter((p) => p.market.status === 'settled').length;
-  const refunds = ready.length - wins;
   const inPlay = open.reduce((sum, p) => sum + p.premium, 0n);
   const couldPay = open.reduce((sum, p) => sum + p.quantity, 0n);
-  // Until the person picks, show where the news is: results when nothing is open.
+  const spotUsd = spot.data?.usd ?? null;
+  const winning = open.filter((p) => spotUsd != null && p.winsAt(spotUsd)).length;
+
+  // Today's record, from the rounds that have actually resolved.
+  const today = useMemo(() => {
+    const dayStart = new Date().setHours(0, 0, 0, 0);
+    const done = settled.filter((p) => p.market.expiry >= dayStart && p.market.status === 'settled');
+    const won = done.filter((p) => p.market.settlement != null && p.winsAt(p.market.settlement)).length;
+    return { total: done.length, won, lost: done.length - won };
+  }, [settled]);
+
+  const multiple = inPlay > 0n ? Number(couldPay) / Number(inPlay) : 0;
   const tab: Tab = picked ?? (open.length === 0 && settled.length > 0 ? 'settled' : 'open');
   const list = tab === 'open' ? open : settled;
   const loading = positions.loading && !positions.data;
@@ -74,13 +89,12 @@ export function Portfolio() {
       }
     });
 
-  return (
-    <div className="shell page" style={{ maxWidth: 860 }}>
-      <div className="page-head">
-        <h1 className="title">Portfolio</h1>
-      </div>
-
-      {!address ? (
+  if (!address) {
+    return (
+      <div className="shell page">
+        <div className="pf-head">
+          <h1 className="title">Portfolio</h1>
+        </div>
         <section className="card">
           <EmptyState
             title="Connect a wallet to see your bets"
@@ -92,76 +106,141 @@ export function Portfolio() {
             }
           />
         </section>
-      ) : (
-        <>
-          <div className="stats">
-            <div className="stat">
-              <div className="label">In play</div>
-              <div className="stat-value">{loading ? <Skeleton width={110} height={30} /> : <>{musd(inPlay)}<span className="unit">MUSD</span></>}</div>
-            </div>
-            <div className="stat">
-              <div className="label">Could pay</div>
-              <div className="stat-value">{loading ? <Skeleton width={110} height={30} /> : <>{musd(couldPay)}<span className="unit">MUSD</span></>}</div>
-            </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="shell">
+        <div className="pf-head">
+          <div>
+            <span className="eyebrow pf-live">
+              <i aria-hidden />
+              {open.length === 0 ? 'Nothing running' : `${open.length} bet${open.length > 1 ? 's' : ''} running`}
+            </span>
+            <h1 className="title pf-title">Portfolio</h1>
+          </div>
+          <div className="pf-actions">
+            <span className="pf-balance mono">
+              {balances.data ? musd(balances.data.musd) : '—'}
+              <em>MUSD</em>
+            </span>
+            <Link className="btn red" href="/markets">
+              Open markets
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* The four figures, each drawn as well as stated. */}
+      <section className="pf-band" aria-label="How today is going">
+        <div className="shell pf-band-inner">
+          <div className="pf-fig wide">
+            <span className="pf-k">At stake now</span>
+            <span className="pf-v">
+              {loading ? <Skeleton width={120} height={40} /> : musd(inPlay)}
+              <em>MUSD</em>
+            </span>
+            {open.length ? (
+              <span className="pf-bars" aria-hidden>
+                {open.map((p) => (
+                  <i
+                    key={p.id.toString()}
+                    className={spotUsd != null && p.winsAt(spotUsd) ? 'win' : 'behind'}
+                    style={{ flexGrow: Number(p.premium) || 1 }}
+                  />
+                ))}
+              </span>
+            ) : null}
+            <span className="pf-note">
+              {open.length ? `across ${open.length} open bet${open.length > 1 ? 's' : ''} · ${winning} winning` : 'no open bets'}
+            </span>
           </div>
 
-          {readyTotal > 0n ? (
-            <div className="collect">
-              <div>
-                <div className="what">
-                  {wins ? `You won ${wins === 1 ? 'a round' : `${wins} rounds`}` : 'Refund ready'}
-                  {wins && refunds ? ` · ${refunds} refund${refunds > 1 ? 's' : ''}` : ''}
-                </div>
-                <div className="howmuch">
-                  {musd(readyTotal)}
-                  <small>MUSD</small>
-                </div>
-              </div>
-              <Button tone="white" busy={busy === 'claim'} disabled={busy !== null} onClick={() => void claimAll()}>
-                Collect
+          <div className="pf-fig">
+            <span className="pf-k">If they all land</span>
+            <span className="pf-v green">{loading ? <Skeleton width={90} height={30} /> : musd(couldPay)}</span>
+            <span className="pf-note">{multiple > 0 ? `${multiple.toFixed(2)}× what is staked` : '—'}</span>
+          </div>
+
+          <div className="pf-fig">
+            <span className="pf-k">Settled today</span>
+            <span className="pf-v">{today.total}</span>
+            {today.total ? (
+              <span className="pf-bars" aria-hidden>
+                <i className="win" style={{ flexGrow: today.won || 0.001 }} />
+                <i className="behind" style={{ flexGrow: today.lost || 0.001 }} />
+              </span>
+            ) : null}
+            <span className="pf-note">{today.total ? `${today.won} won · ${today.lost} lost` : 'nothing resolved yet'}</span>
+          </div>
+
+          <div className="pf-fig">
+            <span className="pf-k">To collect</span>
+            <span className="pf-v">{musd(readyTotal)}</span>
+            {readyTotal > 0n ? (
+              <Button tone="ink" className="sm" busy={busy === 'claim'} disabled={busy !== null} onClick={() => void claimAll()}>
+                Collect all
               </Button>
-            </div>
-          ) : null}
-
-          {error ? (
-            <p className="error-line" style={{ marginTop: 12 }}>
-              {error}
-            </p>
-          ) : null}
-
-          <div style={{ margin: '24px 0 12px' }}>
-            <Segmented
-              label="Bets"
-              items={[
-                { key: 'open', label: 'Open', count: open.length },
-                { key: 'settled', label: 'Settled', count: settled.length },
-              ]}
-              value={tab}
-              onChange={setPicked}
-            />
-          </div>
-
-          <section className="card" aria-live="polite">
-            {loading ? (
-              <div className="position">
-                <Skeleton width="60%" height={20} />
-              </div>
-            ) : positions.error && !positions.data ? (
-              <EmptyState title="Couldn't load your bets" body="Mezo isn't answering. This retries on its own." />
-            ) : list.length === 0 ? (
-              <EmptyState
-                title={tab === 'open' ? 'No open bets' : 'No results yet'}
-                body={tab === 'open' ? 'Pick Up or Down on a round and it shows here.' : 'Settled rounds show here with what they paid.'}
-              />
             ) : (
-              list.map((p) => (
-                <Row key={p.id.toString()} p={p} now={now} spotUsd={spot.data?.usd ?? null} busy={busy} onCashOut={() => void cashOut(p)} />
-              ))
+              <span className="pf-note">nothing waiting</span>
             )}
-          </section>
-        </>
-      )}
-    </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="shell page">
+        {error ? <p className="error-line">{error}</p> : null}
+
+        <div className="pf-tabs">
+          <Segmented
+            label="Bets"
+            items={[
+              { key: 'open', label: 'Open', count: open.length },
+              { key: 'settled', label: 'Settled', count: settled.length },
+            ]}
+            value={tab}
+            onChange={setPicked}
+          />
+          <span className="pf-spot mono">{spotUsd != null ? `Bitcoin ${usd0(spotUsd)}` : ''}</span>
+        </div>
+
+        <section className="ledger" aria-live="polite">
+          {loading ? (
+            <div className="ledger-row">
+              <Skeleton width="60%" height={20} />
+            </div>
+          ) : positions.error && !positions.data ? (
+            <EmptyState title="Couldn't load your bets" body="Mezo isn't answering. This retries on its own." />
+          ) : list.length === 0 ? (
+            <EmptyState
+              title={tab === 'open' ? 'No open bets' : 'No results yet'}
+              body={tab === 'open' ? 'Pick Up or Down on a round and it shows here.' : 'Settled rounds show here with what they paid.'}
+            />
+          ) : (
+            <>
+              <div className="ledger-head" aria-hidden>
+                <span />
+                <span>Your call</span>
+                <span>{tab === 'open' ? 'Closes' : 'Closed'}</span>
+                <span>Stake</span>
+                <span>Pays</span>
+                <span>Now</span>
+                <span />
+              </div>
+              {list.map((p) => (
+                <Row key={p.id.toString()} p={p} now={now} spotUsd={spotUsd} busy={busy} onCashOut={() => void cashOut(p)} />
+              ))}
+            </>
+          )}
+        </section>
+
+        <p className="pf-foot">
+          Cashing out pays the live price, minus the 1% fee. Every bet is on the chain and readable on the explorer.
+        </p>
+      </div>
+    </>
   );
 }
 
@@ -179,72 +258,72 @@ function Row({ p, now, spotUsd, busy, onCashOut }: { p: Position; now: number; s
   const m = p.market;
   const left = m.expiry - now;
   const live = p.open && m.status === 'live';
-  const round = roundName(m.cadence);
+  const ahead = live && spotUsd != null && p.winsAt(spotUsd);
 
-  let headline: string;
-  let color = 'var(--ink)';
-  let sub: string;
+  let state: string;
+  let tone: 'win' | 'behind' | 'flat';
   if (live && left <= 0) {
-    headline = 'Settling';
-    color = 'var(--text3)';
-    sub = 'any second';
+    state = 'Settling';
+    tone = 'flat';
   } else if (live) {
-    const winning = spotUsd != null && p.winsAt(spotUsd);
-    headline = spotUsd == null ? '—' : winning ? 'Winning' : 'Behind';
-    color = winning ? 'var(--green-text)' : 'var(--down-text)';
-    sub = `${clock(left)} left`;
+    state = spotUsd == null ? '—' : ahead ? 'Winning' : 'Behind';
+    tone = ahead ? 'win' : 'behind';
   } else if (p.cashedOut) {
-    headline = 'Cashed out';
-    color = 'var(--text2)';
-    sub = `stake ${musd(p.premium)}`;
+    state = 'Cashed out';
+    tone = 'flat';
   } else if (m.status === 'void') {
-    headline = `+${musd(p.premium)}`;
-    sub = p.open ? 'refund to collect' : 'refunded';
+    state = p.open ? 'Refund ready' : 'Refunded';
+    tone = 'flat';
   } else {
     const won = m.settlement != null && p.winsAt(m.settlement);
-    headline = won ? `+${musd(p.quantity - p.premium)}` : `−${musd(p.premium)}`;
-    color = won ? 'var(--green-text)' : 'var(--text2)';
-    sub = won ? (p.open ? 'ready to collect' : 'collected') : 'lost';
+    state = won ? `+${musd(p.quantity - p.premium)}` : `−${musd(p.premium)}`;
+    tone = won ? 'win' : 'behind';
   }
 
-  const when = live
-    ? m.cadence === '1d'
-      ? 'Later today'
-      : `${round} · closes ${hhmm(m.expiry)}`
-    : m.settlement != null
-      ? `Closed ${hhmm(m.expiry)} at ${usd0(m.settlement)}`
-      : `${round} · ${hhmm(m.expiry)}`;
-  const tileSide = p.side === 'range' ? 'range' : p.side;
+  const total = ROUND_MS[m.cadence] ?? ROUND_MS['5m'];
+  const remaining = Math.max(0, Math.min(1, left / total));
 
   return (
-    <div className="position">
-      <div className="position-main">
-        <span className={`side-tile ${tileSide}`}>
+    <div className={`ledger-row ${tone}`}>
+      <span className="ledger-stripe" aria-hidden />
+
+      <span className="ledger-call">
+        <span className={`side-tile ${p.side === 'range' ? 'range' : p.side}`}>
           {p.side !== 'range' ? <Tri dir={p.side} size={12} color={p.side === 'up' ? 'var(--green-text)' : 'var(--down-text)'} /> : null}
         </span>
-        <div style={{ minWidth: 0 }}>
-          <div className="strong">{callText(p)}</div>
-          <div className="small">{when}</div>
-        </div>
-        <div className="position-right">
-          <div className="position-head" style={{ color }}>
-            {headline}
-          </div>
-          <div className="small num">{sub}</div>
-        </div>
-      </div>
-      {live ? (
-        <div className="position-foot">
-          <span className="small">
-            Stake <b className="strong">{musd(p.premium)}</b> · pays <b className="strong">{musd(p.quantity)}</b>
-          </span>
-          {p.cashOut != null && p.cashOut > 0n && left > 0 ? (
-            <Button tone="soft" className="sm" busy={busy === `redeem:${p.id}`} disabled={busy !== null} onClick={onCashOut}>
-              {busy === `redeem:${p.id}` ? 'Cashing out…' : `Cash out ${musd(p.cashOut)}`}
-            </Button>
-          ) : null}
-        </div>
-      ) : null}
+        <span className="ledger-call-text">
+          <b>{callText(p)}</b>
+          <small>{m.cadence === '1d' ? 'Later today' : roundName(m.cadence)}</small>
+        </span>
+      </span>
+
+      <span className="ledger-when">
+        {live ? (
+          <>
+            <b className="mono">{clock(Math.max(0, left))}</b>
+            <span className="ledger-drain" aria-hidden>
+              <i style={{ transform: `scaleX(${remaining})` }} />
+            </span>
+          </>
+        ) : (
+          <>
+            <b className="mono">{hhmm(m.expiry)}</b>
+            <small>{m.settlement != null ? usd0(m.settlement) : '—'}</small>
+          </>
+        )}
+      </span>
+
+      <span className="ledger-num mono">{musd(p.premium)}</span>
+      <span className="ledger-num mono strong">{musd(p.quantity)}</span>
+      <span className={`ledger-state ${tone}`}>{state}</span>
+
+      <span className="ledger-action">
+        {live && p.cashOut != null && p.cashOut > 0n && left > 0 ? (
+          <Button tone="soft" className="sm block" busy={busy === `redeem:${p.id}`} disabled={busy !== null} onClick={onCashOut}>
+            {busy === `redeem:${p.id}` ? 'Cashing out…' : `Cash out ${musd(p.cashOut)}`}
+          </Button>
+        ) : null}
+      </span>
     </div>
   );
 }

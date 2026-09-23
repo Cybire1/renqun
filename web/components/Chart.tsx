@@ -11,7 +11,20 @@ const RED = '#ff004d';
 const AXIS_W = 64;
 const PAD_Y = 14;
 
-export function Chart({ series, strike, windowMs, height = 280 }: { series: SpotPoint[]; strike: number; windowMs: number; height?: number }) {
+export function Chart({
+  series,
+  strike,
+  windowMs,
+  height = 280,
+  bare = false,
+}: {
+  series: SpotPoint[];
+  strike: number;
+  windowMs: number;
+  height?: number;
+  /** No axis column or gridlines: the line runs the full width, for the hero card. */
+  bare?: boolean;
+}) {
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const id = useId().replace(/:/g, '');
@@ -24,7 +37,7 @@ export function Chart({ series, strike, windowMs, height = 280 }: { series: Spot
     return () => ro.disconnect();
   }, []);
 
-  const plotW = Math.max(0, width - AXIS_W);
+  const plotW = Math.max(0, width - (bare ? 0 : AXIS_W));
   const pts = series.length > 1 ? series : null;
 
   let body = null;
@@ -61,14 +74,16 @@ export function Chart({ series, strike, windowMs, height = 280 }: { series: Spot
             <stop offset="1" stopColor={UP} stopOpacity={0} />
           </linearGradient>
         </defs>
-        {ticks.map((v) => (
-          <g key={v}>
-            <line x1={0} x2={plotW} y1={y(v)} y2={y(v)} stroke="rgba(23,23,23,0.05)" />
-            <text className="axis" x={plotW + 10} y={y(v) + 4}>
-              {Math.round(v).toLocaleString('en-US')}
-            </text>
-          </g>
-        ))}
+        {bare
+          ? null
+          : ticks.map((v) => (
+              <g key={v}>
+                <line x1={0} x2={plotW} y1={y(v)} y2={y(v)} stroke="rgba(23,23,23,0.05)" />
+                <text className="axis" x={plotW + 10} y={y(v) + 4}>
+                  {Math.round(v).toLocaleString('en-US')}
+                </text>
+              </g>
+            ))}
         <path d={area} fill={`url(#fill-${id})`} clipPath={`url(#above-${id})`} />
         <path d={line} fill="none" stroke={UP} strokeWidth={2.4} strokeLinejoin="round" strokeLinecap="round" clipPath={`url(#above-${id})`} />
         <path d={line} fill="none" stroke={DOWN} strokeWidth={2.4} strokeLinejoin="round" strokeLinecap="round" clipPath={`url(#below-${id})`} />

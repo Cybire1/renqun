@@ -45,7 +45,7 @@ export function Button({
   ...rest
 }: {
   children: ReactNode;
-  tone?: 'red' | 'soft' | 'white' | 'muted';
+  tone?: 'red' | 'soft' | 'white' | 'muted' | 'ink';
   busy?: boolean;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
