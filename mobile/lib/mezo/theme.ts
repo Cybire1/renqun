@@ -1,5 +1,5 @@
-// Renqun's skin: Mezo's palette with Sora / Inter / JetBrains Mono. Source: the design canvas in
-// design/mezo-canvas.
+// Renqun's skin: Mezo's palette with Sora / Inter / JetBrains Mono. The web app's tokens in
+// web/app/globals.css are the same set.
 //
 // Colour rules (contrast-checked):
 //   • One red. Mezo off-red #FF004D marks identity and your next action: fills with white labels

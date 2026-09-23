@@ -15,3 +15,7 @@ services/drip/.drip-state.json
 
 # vercel
 .vercel
+
+# design scratch: flyer renders and exported canvas payloads, kept locally
+design/campaign/
+design/landing/
