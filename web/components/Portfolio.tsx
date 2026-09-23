@@ -160,8 +160,10 @@ export function Portfolio() {
 
           <div className="pf-fig">
             <span className="pf-k">If they all land</span>
-            <span className="pf-v green">{loading ? <Skeleton width={90} height={30} /> : musd(couldPay)}</span>
-            <span className="pf-note">{multiple > 0 ? `${multiple.toFixed(2)}× what is staked` : '—'}</span>
+            <span className={`pf-v${couldPay > 0n ? ' green' : ''}`}>
+              {loading ? <Skeleton width={90} height={30} /> : open.length ? musd(couldPay) : '—'}
+            </span>
+            <span className="pf-note">{multiple > 0 ? `${multiple.toFixed(2)}× what is staked` : 'nothing running'}</span>
           </div>
 
           <div className="pf-fig">
@@ -173,7 +175,7 @@ export function Portfolio() {
                 <i className="behind" style={{ flexGrow: today.lost || 0.001 }} />
               </span>
             ) : null}
-            <span className="pf-note">{today.total ? `${today.won} won · ${today.lost} lost` : 'nothing resolved yet'}</span>
+            <span className="pf-note">{today.total ? `${today.won} won · ${today.lost} lost` : 'none today'}</span>
           </div>
 
           <div className="pf-fig">
@@ -276,7 +278,11 @@ function Row({ p, now, spotUsd, busy, onCashOut }: { p: Position; now: number; s
     tone = 'flat';
   } else {
     const won = m.settlement != null && p.winsAt(m.settlement);
-    state = won ? `+${musd(p.quantity - p.premium)}` : `−${musd(p.premium)}`;
+    // Stake and payout are shown truncated to the cent, so the gain is their difference as shown:
+    // 2.18 paid on 1.99 reads +0.19, not the +0.18 the exact 0.185 truncates to.
+    const cent = 10n ** 16n;
+    const gain = (p.quantity / cent - p.premium / cent) * cent;
+    state = won ? `+${musd(gain)}` : `−${musd(p.premium)}`;
     tone = won ? 'win' : 'behind';
   }
 
