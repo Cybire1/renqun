@@ -8,6 +8,7 @@ import {
   fetchBalances,
   fetchCapacity,
   fetchPositions,
+  fetchLaterMarket,
   fetchRecentMarkets,
   fetchSpot,
   fetchSpotHistory,
@@ -145,7 +146,15 @@ export function useNow(ms = 1000): number {
 /** Latest BTC print from Mezo's oracle, every few seconds. */
 export const useSpot = () => usePoll<SpotPoint>(fetchSpot, 4_000, 'spot');
 
-export const useMarkets = () => usePoll<Market[]>(() => fetchRecentMarkets(20), 8_000, 'markets');
+/** The recent rounds, plus the epoch's "later today" market, which opens hours before it closes and
+ *  would otherwise drop out of the recent window long before it ends. */
+async function fetchMarketsWithLater(): Promise<Market[]> {
+  const [recent, later] = await Promise.all([fetchRecentMarkets(20), fetchLaterMarket()]);
+  if (!later || recent.some((m) => m.id === later.id)) return recent;
+  return [...recent, later].sort((a, b) => a.expiry - b.expiry);
+}
+
+export const useMarkets = () => usePoll<Market[]>(fetchMarketsWithLater, 8_000, 'markets');
 
 export function useBalances(addr: Address | null) {
   return usePoll<Balances>(addr ? () => fetchBalances(addr) : null, 10_000, `bal:${addr}`);

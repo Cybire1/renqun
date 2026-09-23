@@ -202,6 +202,38 @@ export async function fetchRecentMarkets(lookback = 12): Promise<Market[]> {
   return markets.sort((a, b) => a.expiry - b.expiry);
 }
 
+let laterId: bigint | null = null;
+
+/**
+ * The running epoch's "later today" market, or null. The keeper opens exactly one at the start of
+ * each epoch, so within about 90 minutes it has fallen out of any short `fetchRecentMarkets`
+ * window while it still has hours to run. Walking back from the newest market, the first "later"
+ * market found is the latest one: live means it is this epoch's, resolved means this epoch has none
+ * yet. Resolved markets are cached by `fetchMarket`, so after the first walk this is nearly free.
+ */
+export async function fetchLaterMarket(): Promise<Market | null> {
+  if (laterId != null) {
+    const known = await fetchMarket(laterId);
+    if (known.status === 'live') return known;
+    laterId = null;
+  }
+  let hi = await mezoClient().readContract({ address: venue(), abi, functionName: 'marketCount' });
+  while (hi > 0n) {
+    const lo = hi > 40n ? hi - 40n : 0n;
+    const ids: bigint[] = [];
+    for (let i = hi; i > lo; i--) ids.push(i);
+    const newestFirst = await Promise.all(ids.map(fetchMarket));
+    const later = newestFirst.find((m) => m.cadence === '1d');
+    if (later) {
+      if (later.status !== 'live') return null;
+      laterId = later.id;
+      return later;
+    }
+    hi = lo;
+  }
+  return null;
+}
+
 /**
  * New bets close this long before a round ends. In the last seconds the odds swing to extremes and
  * the venue refuses them ("odds too lopsided", "price moved"), which reads as the app being broken;
