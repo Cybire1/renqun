@@ -202,6 +202,28 @@ export async function fetchRecentMarkets(lookback = 12): Promise<Market[]> {
   return markets.sort((a, b) => a.expiry - b.expiry);
 }
 
+/**
+ * Every market that closes at or after `sinceMs`, walking back from the newest. Markets are opened
+ * in order, a few minutes to an hour ahead of their close, so once a whole batch closed before
+ * `sinceMs` the rest are older still. Resolved markets are cached by `fetchMarket`, so after the
+ * first walk each call re-reads only the live ones.
+ */
+export async function fetchMarketsSince(sinceMs: number): Promise<Market[]> {
+  let hi = await mezoClient().readContract({ address: venue(), abi, functionName: 'marketCount' });
+  const out: Market[] = [];
+  while (hi > 0n) {
+    const lo = hi > 60n ? hi - 60n : 0n;
+    const ids: bigint[] = [];
+    for (let i = hi; i > lo; i--) ids.push(i);
+    const batch = await Promise.all(ids.map(fetchMarket));
+    const inRange = batch.filter((m) => m.expiry >= sinceMs);
+    out.push(...inRange);
+    if (inRange.length === 0) break;
+    hi = lo;
+  }
+  return out.sort((a, b) => a.expiry - b.expiry);
+}
+
 let laterId: bigint | null = null;
 
 /**
@@ -598,6 +620,10 @@ export interface Vault {
   epoch: bigint;
   /** ms epoch of the next pool update. */
   nextRoll: number;
+  /** Length of one pool window, ms: requests made in it are priced at its end. */
+  windowMs: number;
+  /** The fee on every bet, 1e9-scaled (10_000_000 is 1%). It stays in the pool. */
+  feeRate: bigint;
   /** Waiting for the next pool update. */
   queuedDeposit: bigint;
   queuedWithdrawShares: bigint;
@@ -609,13 +635,14 @@ export interface Vault {
 export async function fetchVault(owner: Address): Promise<Vault> {
   const client = mezoClient();
   const v = venue();
-  const [nav, supply, shares, atRisk, cfg, epoch] = await Promise.all([
+  const [nav, supply, shares, atRisk, cfg, epoch, epochLength] = await Promise.all([
     client.readContract({ address: v, abi, functionName: 'navAssets' }),
     client.readContract({ address: v, abi, functionName: 'totalSupply' }),
     client.readContract({ address: v, abi, functionName: 'balanceOf', args: [owner] }),
     client.readContract({ address: v, abi, functionName: 'liveMaxLiability' }),
     fetchConfig(),
     client.readContract({ address: v, abi, functionName: 'currentEpoch' }),
+    client.readContract({ address: v, abi, functionName: 'epochLength' }),
   ]);
   const [end, queuedDeposit, queuedWithdrawShares, depositEpochs, withdrawEpochs] = await Promise.all([
     client.readContract({ address: v, abi, functionName: 'epochEnd', args: [epoch] }),
@@ -646,6 +673,8 @@ export async function fetchVault(owner: Address): Promise<Vault> {
     cap: (nav * cfg.maxUtilization) / F,
     epoch,
     nextRoll: Number(end) * 1000,
+    windowMs: Number(epochLength) * 1000,
+    feeRate: cfg.feeRate,
     queuedDeposit,
     queuedWithdrawShares,
     claimableDeposits: claimableDeposits.filter((e): e is bigint => e !== null),

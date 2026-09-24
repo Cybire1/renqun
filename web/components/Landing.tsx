@@ -21,7 +21,7 @@ import {
   usd0,
   type Market,
 } from '@renqun/client';
-import { useMarkets, useNow, useOdds, useSpotSeries, useVault } from '@/lib/hooks';
+import { useMarkets, useNow, useOdds, useSpotSeries, useToday, useVault } from '@/lib/hooks';
 import { Chart } from './Chart';
 import { WordMarkets } from './WordMarkets';
 import { Skeleton, Tri } from './ui';
@@ -45,10 +45,12 @@ export function Landing() {
   const upcoming = useMemo(() => live.slice(1, 3), [live]);
   const odds = useOdds(round && bettable(round, now) ? round : null);
 
-  const settledToday = useMemo(() => {
-    const dayStart = new Date().setHours(0, 0, 0, 0);
-    return all.filter((m) => (m.status === 'settled' || m.status === 'void') && m.expiry >= dayStart);
-  }, [all]);
+  // The day's count reads every round since midnight, not just the recent window.
+  const today = useToday();
+  const settledToday = useMemo(
+    () => (today.data ?? []).filter((m) => m.status === 'settled' || m.status === 'void'),
+    [today.data],
+  );
   const upCount = settledToday.filter((m) => winnerOf(m) === 'up').length;
   const downCount = settledToday.filter((m) => winnerOf(m) === 'down').length;
   const recent = useMemo(

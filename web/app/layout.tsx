@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Instrument_Serif, JetBrains_Mono, Sora } from 'next/font/google';
-import { IS_TESTNET, MEZO, explorerAddress, shortAddr } from '@renqun/client';
 import { Header } from '@/components/Header';
 import { Providers } from '@/components/Providers';
 import './globals.css';
@@ -41,19 +40,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <Header />
           <main>{children}</main>
-          <footer className="shell footer">
-            <span className="small">Renqun · Bitcoin rounds paid in MUSD on Mezo{IS_TESTNET ? ' testnet' : ''}</span>
-            <span className="small" style={{ display: 'flex', gap: 16 }}>
-              {MEZO.predict ? (
-                <a href={explorerAddress(MEZO.predict)} target="_blank" rel="noreferrer">
-                  Contract {shortAddr(MEZO.predict)}
-                </a>
-              ) : null}
-              <a href="https://mezo.org" target="_blank" rel="noreferrer">
-                Mezo
-              </a>
-            </span>
-          </footer>
         </Providers>
       </body>
     </html>

@@ -8,6 +8,7 @@ import {
   fetchCapacity,
   fetchPositions,
   fetchLaterMarket,
+  fetchMarketsSince,
   fetchRecentMarkets,
   fetchSpot,
   fetchSpotHistory,
@@ -142,6 +143,10 @@ async function fetchMarketsWithLater(): Promise<Market[]> {
 }
 
 export const useMarkets = () => usePoll<Market[]>(fetchMarketsWithLater, 8_000, 'markets');
+
+/** Every round closing today (since local midnight), for the day's counts. The recent window above
+ *  holds only the last 20 markets, which is under two hours of five-minute rounds. */
+export const useToday = () => usePoll<Market[]>(() => fetchMarketsSince(new Date().setHours(0, 0, 0, 0)), 30_000, 'today');
 
 export function useBalances(addr: Address | null) {
   return usePoll<Balances>(addr ? () => fetchBalances(addr) : null, 10_000, `bal:${addr}`);
