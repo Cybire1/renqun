@@ -16,16 +16,17 @@ import {
   pays,
   pct,
   roundName,
+  bandOn,
+  spotBand,
   usd0,
   type Cadence,
   type Market,
-  type Side,
 } from '@renqun/client';
 import { useMarkets, useMedia, useNow, useOdds, useSpotSeries, useVault } from '@/lib/hooks';
 import { zeroAddress } from 'viem';
 import Link from 'next/link';
 import { Chart } from './Chart';
-import { Ticket } from './Ticket';
+import { Ticket, type BandUsd, type Call } from './Ticket';
 import { WordMarkets } from './WordMarkets';
 import { Countdown, EmptyState, Segmented, Sheet, Skeleton, Tri } from './ui';
 
@@ -43,7 +44,8 @@ export function Markets() {
   const now = useNow(1000);
   const [cadence, setCadence] = useState<Cadence>('5m');
   const [pickedId, setPickedId] = useState<bigint | null>(null);
-  const [side, setSide] = useState<Side>('up');
+  const [side, setSide] = useState<Call>('up');
+  const [band, setBand] = useState<BandUsd | null>(null);
   // On phone widths the ticket waits in a bottom sheet until Up or Down is tapped.
   const narrow = useMedia('(max-width: 980px)');
   const phone = useMedia('(max-width: 560px)') ?? false;
@@ -71,6 +73,11 @@ export function Markets() {
   );
   const justClosed = recent[0] && now - recent[0].expiry < 90_000 ? recent[0] : null;
   const distance = market && spot ? spot.usd - market.strike : null;
+  // A range bet's band, shaded on the chart: the picked one, or the one Bitcoin is in now.
+  const shownBand =
+    side === 'range' && ticketMarket && spot
+      ? ((band && bandOn(ticketMarket, band.low, band.high)) || spotBand(ticketMarket, spot.usd))
+      : null;
   const loading = !now || (markets.loading && !markets.data);
 
   return (
@@ -123,7 +130,13 @@ export function Markets() {
                   </span>
                 ) : null}
               </div>
-              <Chart series={series} strike={market.strike} windowMs={minutes * 60_000} height={phone ? 200 : 300} />
+              <Chart
+                series={series}
+                strike={market.strike}
+                windowMs={minutes * 60_000}
+                height={phone ? 200 : 300}
+                band={shownBand ? { low: shownBand.low, high: shownBand.high } : null}
+              />
               <Progress market={market} now={now} minutes={minutes} />
               {!canBet ? (
                 <button type="button" className="closed-note" disabled={!nextBettable} onClick={() => nextBettable && setPickedId(nextBettable.id)}>
@@ -231,6 +244,9 @@ export function Markets() {
             now={now}
             nextRound={nextBettable}
             onPickNext={(m) => setPickedId(m.id)}
+            spotUsd={spot?.usd ?? null}
+            band={band}
+            onBand={setBand}
           />
           <PoolCard now={now} />
           </div>
@@ -258,12 +274,25 @@ export function Markets() {
                 </button>
               );
             })}
+            <button
+              type="button"
+              className="range-link"
+              disabled={!ticketMarket}
+              onClick={() => {
+                setSide('range');
+                setSheetOpen(true);
+              }}
+            >
+              <i className="range-glyph" aria-hidden />
+              Or call a price range
+              <span aria-hidden>›</span>
+            </button>
           </div>
         ) : null}
       </div>
 
       {narrow && sheetOpen ? (
-        <Sheet open onClose={() => setSheetOpen(false)} title="Your bet">
+        <Sheet open onClose={() => setSheetOpen(false)} title={side === 'range' ? 'Your range' : 'Your bet'}>
           <Ticket
             plain
             market={ticketMarket}
@@ -273,6 +302,9 @@ export function Markets() {
             now={now}
             nextRound={nextBettable}
             onPickNext={(m) => setPickedId(m.id)}
+            spotUsd={spot?.usd ?? null}
+            band={band}
+            onBand={setBand}
           />
         </Sheet>
       ) : null}

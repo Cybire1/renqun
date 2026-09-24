@@ -16,6 +16,7 @@ import {
   rangeChance,
   sideRange,
   type Balances,
+  type Band,
   type Market,
   type Position,
   type SpotPoint,
@@ -192,6 +193,23 @@ export function useLineOdds(market: Market | null, ticks: bigint[]): Map<string,
         }
       : null,
     8_000,
+    key,
+    { keepData: true },
+  );
+  return data?.map ?? null;
+}
+
+/** Live chances for several range bands on one round, in one refresh. */
+export function useBandOdds(market: Market | null, bands: Band[]): Map<string, number> | null {
+  const key = `bands:${market?.id}:${bands.map((b) => `${b.lower}-${b.higher}`).join(',')}`;
+  const { data } = usePoll(
+    market && bands.length
+      ? async () => {
+          const chances = await Promise.all(bands.map((b) => rangeChance(market.id, b.lower, b.higher)));
+          return { key, map: new Map(bands.map((b, i) => [`${b.lower}-${b.higher}`, chances[i]])) };
+        }
+      : null,
+    6_000,
     key,
     { keepData: true },
   );

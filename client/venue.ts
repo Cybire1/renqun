@@ -357,6 +357,41 @@ export function sideRange(side: Side, strikeTick: bigint): [bigint, bigint] {
   return side === 'up' ? [strikeTick, POS_INF_TICK] : [NEG_INF_TICK, strikeTick];
 }
 
+/** How wide a range bet's band is, per kind of round: about one typical move over the round. */
+export const RANGE_WIDTH_USD: Record<Cadence, number> = { '5m': 50, '1h': 200, '1d': 500 };
+
+/** A price band a range bet pays inside: above `low`, at or below `high`. */
+export interface Band {
+  low: number;
+  high: number;
+  lower: bigint;
+  higher: bigint;
+}
+
+/** The band on this round's grid, or null when either edge falls outside it. */
+export function bandOn(market: Market, low: number, high: number): Band | null {
+  const lower = usdToTick(low, market.tickSize);
+  const higher = usdToTick(high, market.tickSize);
+  if (lower < market.minTick || higher > market.maxTick || lower >= higher) return null;
+  return { low, high, lower, higher };
+}
+
+/** `count` adjacent bands around spot, the one holding spot in the middle, highest first. */
+export function rangeBands(market: Market, spotUsd: number, count = 5): Band[] {
+  const w = RANGE_WIDTH_USD[market.cadence];
+  const base = Math.floor(spotUsd / w) * w;
+  const half = Math.floor(count / 2);
+  const out: Band[] = [];
+  for (let i = half; i >= -half; i--) {
+    const b = bandOn(market, base + i * w, base + (i + 1) * w);
+    if (b) out.push(b);
+  }
+  return out;
+}
+
+/** The band BTC is in now. */
+export const spotBand = (market: Market, spotUsd: number): Band | null => rangeBands(market, spotUsd, 1)[0] ?? null;
+
 /** Chance (0..1) that BTC settles in (lower, higher] under the live surface. */
 export async function rangeChance(marketId: bigint, lower: bigint, higher: bigint): Promise<number> {
   const p = await mezoClient().readContract({

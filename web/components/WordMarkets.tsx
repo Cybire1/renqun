@@ -113,7 +113,9 @@ function QuestionSheet({ question, initialSide, now, onClose }: { question: Ques
         market={question.market}
         line={question.line}
         side={side}
-        onSide={setSide}
+        onSide={(s) => {
+          if (s !== 'range') setSide(s); // a yes/no question has no range
+        }}
         odds={odds}
         now={now}
         nextRound={null}

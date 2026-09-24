@@ -295,7 +295,7 @@ function Row({ p, now, spotUsd, busy, onCashOut }: { p: Position; now: number; s
 
       <span className="ledger-call">
         <span className={`side-tile ${p.side === 'range' ? 'range' : p.side}`}>
-          {p.side !== 'range' ? <Tri dir={p.side} size={12} color={p.side === 'up' ? 'var(--green-text)' : 'var(--down-text)'} /> : null}
+          {p.side !== 'range' ? <Tri dir={p.side} size={12} color={p.side === 'up' ? 'var(--green-text)' : 'var(--down-text)'} /> : <i className="range-glyph" />}
         </span>
         <span className="ledger-call-text">
           <b>
