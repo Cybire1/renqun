@@ -65,15 +65,15 @@ export function hhmm(ms: number): string {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
-/** ms epoch → "7:00 PM", or "tomorrow 1:00 AM" / "Fri 1:00 AM" when it is not today. */
+/** ms epoch → "7:00 PM", or "1:00 AM tomorrow" / "1:00 AM Fri" when it is not today. Reads after "at". */
 export function timeWords(ms: number, now = Date.now()): string {
   const d = new Date(ms);
   const t = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   const startOf = (x: number) => new Date(x).setHours(0, 0, 0, 0);
   const days = Math.round((startOf(ms) - startOf(now)) / 86_400_000);
   if (days === 0) return t;
-  if (days === 1) return `tomorrow ${t}`;
-  return `${d.toLocaleDateString('en-US', { weekday: 'short' })} ${t}`;
+  if (days === 1) return `${t} tomorrow`;
+  return `${t} ${d.toLocaleDateString('en-US', { weekday: 'short' })}`;
 }
 
 export const shortAddr = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;

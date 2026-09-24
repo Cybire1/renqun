@@ -46,6 +46,7 @@ export function Markets() {
   const [side, setSide] = useState<Side>('up');
   // On phone widths the ticket waits in a bottom sheet until Up or Down is tapped.
   const narrow = useMedia('(max-width: 980px)');
+  const phone = useMedia('(max-width: 560px)') ?? false;
   const [sheetOpen, setSheetOpen] = useState(false);
   const markets = useMarkets();
   const minutes = CADENCES.find((c) => c.key === cadence)!.minutes;
@@ -122,7 +123,7 @@ export function Markets() {
                   </span>
                 ) : null}
               </div>
-              <Chart series={series} strike={market.strike} windowMs={minutes * 60_000} height={300} />
+              <Chart series={series} strike={market.strike} windowMs={minutes * 60_000} height={phone ? 200 : 300} />
               <Progress market={market} now={now} minutes={minutes} />
               {!canBet ? (
                 <button type="button" className="closed-note" disabled={!nextBettable} onClick={() => nextBettable && setPickedId(nextBettable.id)}>
