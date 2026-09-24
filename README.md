@@ -68,6 +68,14 @@ overrides. The app and renqun.app use the hosted drip; `next dev` uses `services
 
 Never commit keys. The keeper and drip read them from the environment only.
 
+## Where it runs
+
+- **Web app and hosted drip:** Vercel, from `web/`. Pushes to `main` deploy renqun.app.
+- **Keeper:** Railway (project `renqun-keeper`, service `keeper`), under its own wallet
+  [`0xE37C0e20CF9F466e869a9E20ffbe66333b8F6b74`](https://explorer.test.mezo.org/address/0xE37C0e20CF9F466e869a9E20ffbe66333b8F6b74),
+  which holds only `KEEPER_ROLE`. The admin key never leaves the deployer's machine.
+  [`scripts/deploy-keeper.sh`](scripts/deploy-keeper.sh) redeploys it.
+
 ## Before mainnet
 
 An audit, exact-timestamp settlement, a short-dated volatility source, redundant keepers, device
