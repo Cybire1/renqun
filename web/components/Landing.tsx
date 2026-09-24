@@ -142,7 +142,7 @@ export function Landing() {
                     <div className="hr-last">
                       <span className="hr-last-k">Last</span>
                       {recent.slice(0, 4).map((m) => (
-                        <Link key={m.id.toString()} href={`/rounds/${m.id}`} className={`recent-chip ${winnerOf(m)}`}>
+                        <Link prefetch={false} key={m.id.toString()} href={`/rounds/${m.id}`} className={`recent-chip ${winnerOf(m)}`}>
                           <Tri dir={winnerOf(m) === 'up' ? 'up' : 'down'} size={8} />
                           {hhmm(m.expiry)}
                         </Link>
@@ -275,7 +275,7 @@ export function Landing() {
                 <div className="recent" style={{ maskImage: 'none', WebkitMaskImage: 'none', overflowX: 'visible' }}>
                   {recent.length ? (
                     recent.slice(0, 4).map((m) => (
-                      <Link key={m.id.toString()} href={`/rounds/${m.id}`} className={`recent-chip ${winnerOf(m)}`}>
+                      <Link prefetch={false} key={m.id.toString()} href={`/rounds/${m.id}`} className={`recent-chip ${winnerOf(m)}`}>
                         <Tri dir={winnerOf(m) === 'up' ? 'up' : 'down'} size={9} />
                         {hhmm(m.expiry)}
                       </Link>

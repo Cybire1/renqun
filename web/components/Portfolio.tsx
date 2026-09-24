@@ -304,7 +304,7 @@ function Row({ p, now, spotUsd, busy, onCashOut }: { p: Position; now: number; s
         </span>
         <span className="ledger-call-text">
           <b>
-            <Link href={`/rounds/${m.id}`}>{callText(p)}</Link>
+            <Link prefetch={false} href={`/rounds/${m.id}`}>{callText(p)}</Link>
           </b>
           <small>{m.cadence === '1d' ? 'Later today' : roundName(m.cadence)}</small>
         </span>

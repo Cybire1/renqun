@@ -62,7 +62,7 @@ export function RecordCard({ address }: { address: Address }) {
           <b className="up">{r.best ? signed(gainOf(r.best)) : '—'}</b>
           <span className="pf-note">
             {r.best ? (
-              <Link href={`/rounds/${r.best.market.id}`}>
+              <Link prefetch={false} href={`/rounds/${r.best.market.id}`}>
                 {callWords(r.best.side, r.best.lower, r.best.higher, r.best.market)} · {dayWords(r.best.market.expiry)} {hhmm(r.best.market.expiry)}
               </Link>
             ) : (

@@ -102,7 +102,7 @@ export function RoundPage({ id }: { id: bigint }) {
         </Link>
         <span className="rd-steps">
           {around.data?.prev ? (
-            <Link href={`/rounds/${around.data.prev.id}`} aria-label={`Previous round, closed ${hhmm(around.data.prev.expiry)}`}>
+            <Link prefetch={false} href={`/rounds/${around.data.prev.id}`} aria-label={`Previous round, closed ${hhmm(around.data.prev.expiry)}`}>
               ‹ {hhmm(around.data.prev.expiry)}
             </Link>
           ) : (
@@ -110,7 +110,7 @@ export function RoundPage({ id }: { id: bigint }) {
           )}
           <span className="rd-steps-k">{roundName(m.cadence)}</span>
           {around.data?.next ? (
-            <Link href={`/rounds/${around.data.next.id}`} aria-label={`Next round, closes ${hhmm(around.data.next.expiry)}`}>
+            <Link prefetch={false} href={`/rounds/${around.data.next.id}`} aria-label={`Next round, closes ${hhmm(around.data.next.expiry)}`}>
               {hhmm(around.data.next.expiry)} ›
             </Link>
           ) : (

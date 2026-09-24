@@ -276,7 +276,7 @@ function Cell({ m, big = false }: { m: Market; big?: boolean }) {
   const o = outcomeOf(m);
   const label = `${hhmm(m.expiry)}: ${OUTCOME_WORDS[o]}${m.settlement != null ? `, closed ${usd0(m.settlement)} against ${usd0(m.strike)}` : ''}`;
   return (
-    <Link href={`/rounds/${m.id}`} className={`hc ${o}${big ? ' big' : ''}`} role="listitem" aria-label={label} title={label}>
+    <Link prefetch={false} href={`/rounds/${m.id}`} className={`hc ${o}${big ? ' big' : ''}`} role="listitem" aria-label={label} title={label}>
       {big ? (
         <>
           <b className="mono">{hhmm(m.expiry)}</b>
@@ -291,7 +291,7 @@ function RoundRow({ m, bets, now }: { m: Market; bets: number; now: number }) {
   const o = outcomeOf(m);
   const move = m.settlement != null ? m.settlement - m.strike : null;
   return (
-    <Link href={`/rounds/${m.id}`} className={`rs-row-link ${o}`}>
+    <Link prefetch={false} href={`/rounds/${m.id}`} className={`rs-row-link ${o}`}>
       <span className="rs-time">
         <b className="mono">{hhmm(m.expiry)}</b>
         <small>#{m.id.toString()}</small>

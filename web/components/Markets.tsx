@@ -192,7 +192,7 @@ export function Markets() {
                 {recent.map((m) => {
                   const w = winnerOf(m);
                   return (
-                    <Link
+                    <Link prefetch={false}
                       key={m.id.toString()}
                       href={`/rounds/${m.id}`}
                       className={`recent-chip ${w}`}
@@ -403,7 +403,7 @@ function JustClosed({ market }: { market: Market }) {
           ? `${hhmm(market.expiry)} round had no price in time. Bets are refunded.`
           : `${hhmm(market.expiry)} closed at ${usd0(market.settlement ?? 0)}. ${w === 'up' ? 'Up' : 'Down'} won.`}
       </span>
-      <Link className="link" href={`/rounds/${market.id}`}>
+      <Link prefetch={false} className="link" href={`/rounds/${market.id}`}>
         See the round
       </Link>
     </div>
