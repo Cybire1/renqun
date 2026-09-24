@@ -4305,3 +4305,868 @@ dialog.sheet::backdrop {
     display: none;
   }
 }
+
+/* ── a round's own page ───────────────────────────────────────────────────────
+   The question as the headline, the verdict beside it, the oracle's path as the
+   picture, and the record underneath: facts, bets, and the transactions.
+   ───────────────────────────────────────────────────────────────────────────── */
+.eyebrow.pf-live i.still {
+  background: var(--line-strong);
+  box-shadow: none;
+}
+
+.rd-crumbs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font: 600 14px/1 var(--font-body);
+}
+
+.rd-crumbs a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.rd-back:hover {
+  color: var(--red);
+}
+
+.rd-steps {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--sand-deep);
+  font: 600 13px/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--idle);
+}
+
+.rd-steps > a,
+.rd-steps > span {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 12px;
+  border-radius: 999px;
+}
+
+.rd-steps > a:hover {
+  background: var(--card);
+}
+
+.rd-steps-k {
+  font: 500 12px/1 var(--font-body);
+  color: var(--text3);
+}
+
+.rd-head {
+  align-items: flex-end;
+}
+
+.rd-title em {
+  font-style: normal;
+  color: var(--red);
+}
+
+.rd-verdict {
+  display: grid;
+  gap: 6px;
+  min-width: 200px;
+  padding: 16px 20px;
+  border-radius: 20px;
+  background: var(--card);
+  box-shadow: var(--lift-sm);
+}
+
+.rd-verdict-k {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 700 20px/1 var(--font-display);
+  letter-spacing: -0.4px;
+}
+
+.rd-verdict-v {
+  font: 500 13.5px/1.3 var(--font-body);
+  color: var(--text2);
+}
+
+.rd-verdict.up {
+  background: var(--up-soft);
+}
+
+.rd-verdict.up .rd-verdict-k {
+  color: var(--green-text);
+}
+
+.rd-verdict.down {
+  background: var(--down-soft);
+}
+
+.rd-verdict.down .rd-verdict-k {
+  color: var(--down-text);
+}
+
+.rd-verdict.void .rd-verdict-k {
+  color: var(--error);
+}
+
+.rd-verdict.live .rd-verdict-k::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 0 5px rgba(255, 0, 77, 0.13);
+}
+
+.rd-verdict.live .rd-verdict-v {
+  font: 700 28px/1 var(--font-mono);
+  color: var(--ink);
+}
+
+.rd-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+.rd-chart {
+  padding: 20px 22px 18px;
+}
+
+.rd-chart-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.rd-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font: 500 12.5px/1 var(--font-body);
+  color: var(--text2);
+}
+
+.rd-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.rd-legend .k-line {
+  width: 16px;
+  border-top: 2px dashed var(--red);
+}
+
+.rd-legend .k-close {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #8a817a;
+}
+
+.rd-legend .k-close.up {
+  background: #128a4b;
+}
+
+.rd-times {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--hairline);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rd-times li {
+  display: grid;
+  gap: 5px;
+  align-content: start;
+}
+
+.rd-times b {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.rd-times span {
+  font: 500 12.5px/1.35 var(--font-body);
+  color: var(--text3);
+}
+
+.rd-side {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.rd-facts {
+  display: grid;
+  padding: 4px 22px;
+}
+
+.rd-fact {
+  display: grid;
+  gap: 6px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.rd-fact:last-child {
+  border-bottom: 0;
+}
+
+.rd-fact-v {
+  font: 700 26px/1 var(--font-display);
+  letter-spacing: -0.8px;
+  font-variant-numeric: tabular-nums;
+  color: var(--black);
+}
+
+.rd-fact-v.up {
+  color: var(--green-text);
+}
+
+.rd-fact-v.down {
+  color: var(--down-text);
+}
+
+.rd-section {
+  margin-top: 40px;
+}
+
+.rd-bets {
+  padding: 4px 0;
+  overflow: hidden;
+}
+
+.rd-bet {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1.6fr) 110px 110px 150px 24px;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.rd-bet:last-child {
+  border-bottom: 0;
+}
+
+.rd-bet::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--line-strong);
+}
+
+.rd-bet.win::before {
+  background: var(--green);
+}
+
+.rd-bet.behind::before {
+  background: var(--down-line);
+}
+
+.rd-bet-call {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.rd-bet-call b {
+  font: 600 15.5px/1.2 var(--font-body);
+}
+
+.rd-bet-call small {
+  font: 500 12.5px/1.2 var(--font-body);
+  color: var(--text3);
+}
+
+.rd-bet-call small a {
+  color: var(--ink);
+}
+
+.rd-bet-num {
+  display: grid;
+  gap: 3px;
+  justify-items: end;
+  font-size: 15px;
+}
+
+.rd-bet-num small {
+  font: 500 11.5px/1 var(--font-body);
+  color: var(--text3);
+}
+
+.rd-bet .ledger-state {
+  justify-self: end;
+}
+
+.rd-bet-tx {
+  justify-self: end;
+  color: var(--text3);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.rd-bet-tx:hover {
+  color: var(--red);
+}
+
+.range-glyph {
+  display: block;
+  width: 12px;
+  height: 9px;
+  border-block: 2px solid var(--down-text);
+}
+
+.rd-nobets {
+  padding: 20px 22px;
+}
+
+.rd-chain {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rd-chain-row {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: 16px 18px;
+  border-radius: var(--r-row);
+  background: var(--card);
+  box-shadow: var(--lift-sm);
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+a.rd-chain-row:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--lift);
+}
+
+.rd-empty {
+  padding: 36px 24px;
+}
+
+@media (max-width: 980px) {
+  .rd-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .rd-facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 16px;
+  }
+  .rd-fact {
+    border-bottom: 0;
+  }
+  .rd-chain {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rd-bet {
+    grid-template-columns: 40px minmax(0, 1fr) 96px 96px 140px 20px;
+  }
+}
+
+/* ── results: the day in rounds ───────────────────────────────────────────── */
+.rs-head {
+  align-items: flex-end;
+}
+
+.rs-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rs-page {
+  padding-top: 36px;
+}
+
+.rs-day {
+  margin-bottom: 40px;
+}
+
+.rs-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font: 500 12.5px/1 var(--font-body);
+  color: var(--text3);
+}
+
+.rs-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rs-legend .hc {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+}
+
+.rs-grid {
+  display: grid;
+  gap: 6px;
+  padding: 22px 24px;
+  border-radius: var(--r-card);
+  background: var(--card);
+  box-shadow: var(--lift-sm);
+}
+
+.rs-cols,
+.rs-row {
+  display: grid;
+  grid-template-columns: 34px repeat(12, minmax(0, 1fr));
+  gap: 6px;
+  align-items: center;
+}
+
+.rs-cols span {
+  font: 500 10.5px/1 var(--font-mono);
+  color: var(--idle);
+}
+
+.rs-hour {
+  font-size: 11.5px;
+  color: var(--idle);
+}
+
+.hc {
+  display: block;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--well);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.rs-grid.k1h .hc {
+  height: 44px;
+}
+
+a.hc:hover {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 2px var(--card), 0 0 0 3.5px var(--ink);
+  position: relative;
+  z-index: 1;
+}
+
+.hc.up {
+  background: #1fae68;
+}
+
+.hc.down {
+  background: var(--down-line);
+}
+
+.hc.void {
+  background: repeating-linear-gradient(135deg, rgba(255, 0, 77, 0.55) 0 3px, rgba(255, 0, 77, 0.12) 3px 6px);
+}
+
+.hc.live {
+  background: var(--card);
+  box-shadow: inset 0 0 0 2px var(--red);
+  animation: hc-pulse 1.6s ease-in-out infinite;
+}
+
+.hc.later {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+
+.hc.none {
+  background: var(--well);
+}
+
+@keyframes hc-pulse {
+  50% {
+    box-shadow: inset 0 0 0 2px var(--red), 0 0 0 4px rgba(255, 0, 77, 0.14);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hc.live {
+    animation: none;
+  }
+}
+
+.rs-later {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.hc.big {
+  height: auto;
+  display: grid;
+  gap: 6px;
+  padding: 18px;
+  border-radius: var(--r-row);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.hc.big b {
+  font-size: 18px;
+}
+
+.hc.big span {
+  font: 600 13px/1 var(--font-body);
+}
+
+.hc.big.up {
+  background: var(--up-soft);
+  color: var(--green-text);
+}
+
+.hc.big.down {
+  background: var(--down-soft);
+  color: var(--down-text);
+}
+
+.rs-list {
+  padding: 4px 0;
+  overflow: hidden;
+}
+
+.rs-row-link {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr) 96px 64px 118px 14px;
+  gap: 16px;
+  align-items: center;
+  padding: 13px 22px;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.rs-row-link:last-child {
+  border-bottom: 0;
+}
+
+.rs-row-link:hover {
+  background: var(--well);
+}
+
+.rs-time {
+  display: grid;
+  gap: 3px;
+}
+
+.rs-time b {
+  font-size: 15px;
+}
+
+.rs-time small,
+.rs-prices small {
+  font: 500 11.5px/1 var(--font-body);
+  color: var(--text3);
+}
+
+.rs-prices {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 14.5px;
+  min-width: 0;
+}
+
+.rs-arrow {
+  color: var(--idle);
+}
+
+.rs-move {
+  justify-self: end;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text3);
+}
+
+.rs-move.up {
+  color: var(--green-text);
+}
+
+.rs-move.down {
+  color: var(--down-text);
+}
+
+.rs-bets {
+  justify-self: end;
+  font: 600 12px/1 var(--font-body);
+  color: var(--red);
+}
+
+.rs-outcome {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font: 600 12.5px/1 var(--font-body);
+  white-space: nowrap;
+}
+
+.rs-outcome.up {
+  background: var(--up-soft);
+  color: var(--green-text);
+}
+
+.rs-outcome.down {
+  background: var(--down-soft);
+  color: var(--down-text);
+}
+
+.rs-outcome.void {
+  background: var(--red-tint);
+  color: var(--error);
+}
+
+.rs-outcome.live {
+  box-shadow: inset 0 0 0 1.5px var(--red);
+  color: var(--red);
+}
+
+.rs-more {
+  display: flex;
+  margin: 16px auto 0;
+}
+
+@media (max-width: 980px) {
+  .rs-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .rs-later {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .rd-crumbs {
+    font-size: 13.5px;
+  }
+  .rd-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .rd-title {
+    font-size: 26px;
+  }
+  .rd-verdict {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 16px;
+  }
+  .rd-verdict-k {
+    font-size: 17px;
+  }
+  .rd-verdict-v {
+    justify-self: end;
+  }
+  .rd-verdict.live .rd-verdict-v {
+    font-size: 22px;
+  }
+  .rd-chart {
+    padding: 14px 14px 14px;
+  }
+  .rd-chart-top {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .rd-times {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 14px;
+  }
+  .rd-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 14px;
+    padding: 2px 16px;
+  }
+  .rd-fact {
+    padding: 14px 0;
+  }
+  .rd-fact-v {
+    font-size: 22px;
+  }
+  .rd-section {
+    margin-top: 28px;
+  }
+  .rd-bet {
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'tile call state'
+      'tile nums nums';
+    gap: 6px 12px;
+    padding: 12px 16px 12px 18px;
+  }
+  .rd-bet .side-tile {
+    grid-area: tile;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    align-self: start;
+  }
+  .rd-bet-call {
+    grid-area: call;
+  }
+  .rd-bet .ledger-state {
+    grid-area: state;
+  }
+  .rd-bet-num {
+    display: inline-flex;
+    gap: 5px;
+    align-items: baseline;
+    font-size: 13px;
+  }
+  .rd-bet-num:nth-of-type(1) {
+    grid-area: nums;
+    justify-self: start;
+  }
+  .rd-bet-num:nth-of-type(2) {
+    grid-area: nums;
+    justify-self: end;
+  }
+  .rd-bet-tx {
+    display: none;
+  }
+  .rd-chain {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .rd-chain-row {
+    padding: 14px 16px;
+  }
+
+  .rs-controls {
+    width: 100%;
+  }
+  .rs-page {
+    padding-top: 24px;
+  }
+  .rs-day {
+    margin-bottom: 28px;
+  }
+  .rs-day .section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .rs-grid {
+    gap: 4px;
+    padding: 14px 12px;
+  }
+  .rs-cols,
+  .rs-row {
+    grid-template-columns: 20px repeat(12, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .rs-cols span {
+    font-size: 9px;
+  }
+  .rs-hour {
+    font-size: 10px;
+  }
+  .hc {
+    height: 19px;
+    border-radius: 4px;
+  }
+  .rs-grid.k1h .hc {
+    height: 34px;
+  }
+  .hc.big {
+    padding: 14px;
+  }
+  .rs-row-link {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'time prices outcome'
+      'time prices move';
+    gap: 4px 12px;
+    padding: 11px 16px;
+  }
+  .rs-time {
+    grid-area: time;
+  }
+  .rs-time b {
+    font-size: 14px;
+  }
+  .rs-prices {
+    grid-area: prices;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    font-size: 13.5px;
+  }
+  .rs-arrow,
+  .rs-bets,
+  .rs-row-link .chev {
+    display: none;
+  }
+  .rs-outcome {
+    grid-area: outcome;
+    height: 24px;
+    font-size: 12px;
+  }
+  .rs-move {
+    grid-area: move;
+    font-size: 13px;
+  }
+}
+
+/* round chips and bets open their round */
+a.recent-chip {
+  text-decoration: none;
+  transition: box-shadow 140ms ease;
+}
+
+a.recent-chip:hover {
+  box-shadow: inset 0 0 0 1.5px currentColor;
+}
+
+a.hr-last-n {
+  text-decoration: none;
+}
+
+a.hr-last-n:hover {
+  color: var(--ink);
+}
+
+.ledger-call-text b a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ledger-call-text b a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--red);
+  text-underline-offset: 3px;
+}
+
+.just-closed .link {
+  flex-shrink: 0;
+}

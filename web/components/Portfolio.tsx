@@ -298,7 +298,9 @@ function Row({ p, now, spotUsd, busy, onCashOut }: { p: Position; now: number; s
           {p.side !== 'range' ? <Tri dir={p.side} size={12} color={p.side === 'up' ? 'var(--green-text)' : 'var(--down-text)'} /> : null}
         </span>
         <span className="ledger-call-text">
-          <b>{callText(p)}</b>
+          <b>
+            <Link href={`/rounds/${m.id}`}>{callText(p)}</Link>
+          </b>
           <small>{m.cadence === '1d' ? 'Later today' : roundName(m.cadence)}</small>
         </span>
       </span>

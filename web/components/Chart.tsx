@@ -17,6 +17,10 @@ export function Chart({
   windowMs,
   height = 280,
   bare = false,
+  from,
+  to,
+  close,
+  band,
 }: {
   series: SpotPoint[];
   strike: number;
@@ -24,6 +28,13 @@ export function Chart({
   height?: number;
   /** No axis column or gridlines: the line runs the full width, for the hero card. */
   bare?: boolean;
+  /** A fixed time range (ms) instead of the latest `windowMs`: a past round's whole run. */
+  from?: number;
+  to?: number;
+  /** The settlement print, marked where the round closed. */
+  close?: SpotPoint | null;
+  /** A price band a range bet pays inside, shaded. */
+  band?: { low: number; high: number } | null;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
@@ -42,15 +53,16 @@ export function Chart({
 
   let body = null;
   if (pts && plotW > 0) {
-    const tMax = pts[pts.length - 1].t;
-    const tMin = tMax - windowMs;
-    const values = [...pts.map((p) => p.usd), strike];
+    const tMax = to ?? pts[pts.length - 1].t;
+    const tMin = from ?? tMax - windowMs;
+    const span_t = Math.max(1, tMax - tMin);
+    const values = [...pts.map((p) => p.usd), strike, ...(close ? [close.usd] : []), ...(band ? [band.low, band.high] : [])];
     let lo = Math.min(...values);
     let hi = Math.max(...values);
     const span = Math.max(hi - lo, 20);
     lo -= span * 0.12;
     hi += span * 0.12;
-    const x = (t: number) => ((Math.max(t, tMin) - tMin) / windowMs) * plotW;
+    const x = (t: number) => ((Math.min(Math.max(t, tMin), tMax) - tMin) / span_t) * plotW;
     const y = (usd: number) => PAD_Y + (1 - (usd - lo) / (hi - lo)) * (height - PAD_Y * 2);
     const line = pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.t).toFixed(1)} ${y(p.usd).toFixed(1)}`).join('');
     const first = pts[0];
@@ -84,12 +96,25 @@ export function Chart({
                 </text>
               </g>
             ))}
+        {band ? (
+          <rect x={0} width={plotW} y={y(band.high)} height={Math.max(2, y(band.low) - y(band.high))} fill={UP} opacity={0.09} />
+        ) : null}
         <path d={area} fill={`url(#fill-${id})`} clipPath={`url(#above-${id})`} />
         <path d={line} fill="none" stroke={UP} strokeWidth={2.4} strokeLinejoin="round" strokeLinecap="round" clipPath={`url(#above-${id})`} />
         <path d={line} fill="none" stroke={DOWN} strokeWidth={2.4} strokeLinejoin="round" strokeLinecap="round" clipPath={`url(#below-${id})`} />
         <line x1={0} x2={plotW} y1={sy} y2={sy} stroke={RED} strokeWidth={1.4} strokeDasharray="5 5" />
-        <circle cx={x(last.t)} cy={y(last.usd)} r={9} fill={lastUp ? UP : DOWN} opacity={0.16} />
-        <circle cx={x(last.t)} cy={y(last.usd)} r={4.5} fill={lastUp ? UP : DOWN} stroke="#fff" strokeWidth={1.5} />
+        {close ? (
+          <>
+            <line x1={x(close.t)} x2={x(close.t)} y1={0} y2={height} stroke="rgba(23,23,23,0.18)" strokeDasharray="2 4" />
+            <circle cx={x(close.t)} cy={y(close.usd)} r={10} fill={close.usd > strike ? UP : DOWN} opacity={0.18} />
+            <circle cx={x(close.t)} cy={y(close.usd)} r={5} fill={close.usd > strike ? UP : DOWN} stroke="#fff" strokeWidth={2} />
+          </>
+        ) : (
+          <>
+            <circle cx={x(last.t)} cy={y(last.usd)} r={9} fill={lastUp ? UP : DOWN} opacity={0.16} />
+            <circle cx={x(last.t)} cy={y(last.usd)} r={4.5} fill={lastUp ? UP : DOWN} stroke="#fff" strokeWidth={1.5} />
+          </>
+        )}
       </>
     );
   }

@@ -142,12 +142,14 @@ export function Landing() {
                     <div className="hr-last">
                       <span className="hr-last-k">Last</span>
                       {recent.slice(0, 4).map((m) => (
-                        <span key={m.id.toString()} className={`recent-chip ${winnerOf(m)}`}>
+                        <Link key={m.id.toString()} href={`/rounds/${m.id}`} className={`recent-chip ${winnerOf(m)}`}>
                           <Tri dir={winnerOf(m) === 'up' ? 'up' : 'down'} size={8} />
                           {hhmm(m.expiry)}
-                        </span>
+                        </Link>
                       ))}
-                      <span className="hr-last-n">{settledToday.length} today</span>
+                      <Link className="hr-last-n" href="/results">
+                        {settledToday.length} today ›
+                      </Link>
                     </div>
                   ) : null}
 
@@ -273,10 +275,10 @@ export function Landing() {
                 <div className="recent" style={{ maskImage: 'none', WebkitMaskImage: 'none', overflowX: 'visible' }}>
                   {recent.length ? (
                     recent.slice(0, 4).map((m) => (
-                      <span key={m.id.toString()} className={`recent-chip ${winnerOf(m)}`}>
+                      <Link key={m.id.toString()} href={`/rounds/${m.id}`} className={`recent-chip ${winnerOf(m)}`}>
                         <Tri dir={winnerOf(m) === 'up' ? 'up' : 'down'} size={9} />
                         {hhmm(m.expiry)}
-                      </span>
+                      </Link>
                     ))
                   ) : (
                     <Skeleton width="70%" height={30} />

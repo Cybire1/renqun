@@ -169,20 +169,25 @@ export function Markets() {
                   <b style={{ color: 'var(--green-text)' }}>{recent.filter((m) => winnerOf(m) === 'up').length} up</b>
                   {'  ·  '}
                   <b style={{ color: 'var(--down-text)' }}>{recent.filter((m) => winnerOf(m) === 'down').length} down</b>
+                  {'  ·  '}
+                  <Link className="link" href="/results">
+                    All results
+                  </Link>
                 </span>
               </div>
               <div className="recent">
                 {recent.map((m) => {
                   const w = winnerOf(m);
                   return (
-                    <span
+                    <Link
                       key={m.id.toString()}
+                      href={`/rounds/${m.id}`}
                       className={`recent-chip ${w}`}
                       title={m.settlement != null ? `Closed at ${usd0(m.settlement)}, line ${usd0(m.strike)}` : 'No price in time: refunded'}
                     >
                       {w !== 'void' ? <Tri dir={w} size={9} /> : null}
                       {hhmm(m.expiry)}
-                    </span>
+                    </Link>
                   );
                 })}
               </div>
@@ -361,9 +366,14 @@ function JustClosed({ market }: { market: Market }) {
           <Tri dir={w} size={10} color={w === 'up' ? 'var(--green-text)' : 'var(--down-text)'} />
         </span>
       ) : null}
-      {w === 'void'
-        ? `${hhmm(market.expiry)} round had no price in time. Bets are refunded.`
-        : `${hhmm(market.expiry)} closed at ${usd0(market.settlement ?? 0)}. ${w === 'up' ? 'Up' : 'Down'} won.`}
+      <span style={{ flex: 1 }}>
+        {w === 'void'
+          ? `${hhmm(market.expiry)} round had no price in time. Bets are refunded.`
+          : `${hhmm(market.expiry)} closed at ${usd0(market.settlement ?? 0)}. ${w === 'up' ? 'Up' : 'Down'} won.`}
+      </span>
+      <Link className="link" href={`/rounds/${market.id}`}>
+        See the round
+      </Link>
     </div>
   );
 }

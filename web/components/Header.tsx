@@ -13,6 +13,7 @@ const ROUND_MS = 5 * 60_000;
 
 const NAV = [
   { href: '/markets', label: 'Markets' },
+  { href: '/results', label: 'Results' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/earn', label: 'Earn' },
 ];
@@ -55,7 +56,7 @@ export function Header() {
         {compact ? null : (
           <nav className="nav" aria-label="Main">
             {NAV.map((n) => (
-              <Link key={n.href} href={n.href} aria-current={path === n.href ? 'page' : undefined}>
+              <Link key={n.href} href={n.href} aria-current={path === n.href || (n.href === '/results' && path.startsWith('/rounds/')) ? 'page' : undefined}>
                 <span>{n.label}</span>
               </Link>
             ))}
@@ -108,7 +109,7 @@ export function Header() {
       {compact ? (
         <nav className="tabbar" aria-label="Main">
           {NAV.map((n) => (
-            <Link key={n.href} href={n.href} aria-current={path === n.href ? 'page' : undefined}>
+            <Link key={n.href} href={n.href} aria-current={path === n.href || (n.href === '/results' && path.startsWith('/rounds/')) ? 'page' : undefined}>
               <span>{n.label}</span>
             </Link>
           ))}
