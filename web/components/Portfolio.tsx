@@ -23,6 +23,8 @@ import {
 import { useBalances, useNow, usePoll, usePositions } from '@/lib/hooks';
 import { TxRevertedError, declined, useWallet } from '@/lib/wallet';
 import { Button, EmptyState, Segmented, Skeleton, Tri } from './ui';
+import { RecordCard } from './RecordCard';
+import { ShareButton } from './ShareButton';
 
 type Tab = 'open' | 'settled';
 
@@ -195,6 +197,8 @@ export function Portfolio() {
       <div className="shell page">
         {error ? <p className="error-line">{error}</p> : null}
 
+        <RecordCard address={address} />
+
         <div className="pf-tabs">
           <Segmented
             label="Bets"
@@ -286,6 +290,7 @@ function Row({ p, now, spotUsd, busy, onCashOut }: { p: Position; now: number; s
     tone = won ? 'win' : 'behind';
   }
 
+  const wonIt = !live && !p.cashedOut && m.status === 'settled' && m.settlement != null && p.winsAt(m.settlement);
   const total = ROUND_MS[m.cadence] ?? ROUND_MS['5m'];
   const remaining = Math.max(0, Math.min(1, left / total));
 
@@ -326,6 +331,7 @@ function Row({ p, now, spotUsd, busy, onCashOut }: { p: Position; now: number; s
       <span className={`ledger-state ${tone}`}>{state}</span>
 
       <span className="ledger-action">
+        {wonIt ? <ShareButton positionId={p.id} text={`My call on Renqun: ${callText(p)}. It paid ${musd(p.quantity)} MUSD.`} /> : null}
         {live && p.cashOut != null && p.cashOut > 0n && left > 0 ? (
           <Button tone="soft" className="sm block" busy={busy === `redeem:${p.id}`} disabled={busy !== null} onClick={onCashOut}>
             {busy === `redeem:${p.id}` ? 'Cashing out…' : `Cash out ${musd(p.cashOut)}`}

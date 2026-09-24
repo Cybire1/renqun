@@ -278,11 +278,14 @@ export async function fetchSpotBetween(fromMs: number, toMs: number, points = 48
   const back = BigInt(Math.max(1, Math.round((endMs - fromMs) / 1000 / secPerBlock)));
   const startBlock = endBlock > back ? endBlock - back : 1n;
 
-  const n = Math.max(2, points);
-  const step = (endBlock - startBlock) / BigInt(n - 1) || 1n;
+  // Spread the reads evenly over the whole window, one per block when it is shorter than `points`.
+  const width = endBlock - startBlock;
+  const n = Math.max(2, Math.min(points, Number(width) + 1));
   const blocks: bigint[] = [];
-  for (let b = startBlock; b <= endBlock && blocks.length < n; b += step) blocks.push(b);
-  if (blocks[blocks.length - 1] !== endBlock) blocks.push(endBlock);
+  for (let i = 0; i < n; i++) {
+    const b = startBlock + (width * BigInt(i)) / BigInt(n - 1);
+    if (blocks[blocks.length - 1] !== b) blocks.push(b);
+  }
   const rows = await Promise.all(
     blocks.map((blockNumber) =>
       client.readContract({ address: MEZO_PRICE_ORACLE, abi: oracleAbi, functionName: 'latestRoundData', blockNumber }).catch(() => null),
