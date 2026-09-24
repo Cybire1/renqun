@@ -6,7 +6,7 @@ import { clock, explorerAddress, fetchSpot, liveRounds, musd, shortAddr, usd0, t
 import { useBalances, useMarkets, useMedia, useNow, usePoll } from '@/lib/hooks';
 import { useWallet } from '@/lib/wallet';
 import { RenqunMark } from './RenqunMark';
-import { Button, Glyph, Tri } from './ui';
+import { Button, Glyph, Sheet, Tri } from './ui';
 import { useFunds } from './Providers';
 
 const ROUND_MS = 5 * 60_000;
@@ -16,7 +16,16 @@ const NAV = [
   { href: '/results', label: 'Results' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/earn', label: 'Earn' },
+  { href: '/stats', label: 'Stats' },
+  { href: '/learn', label: 'Learn' },
 ];
+/** On a phone the tab bar holds the first four; the rest sit behind More. */
+const TABS = NAV.slice(0, 4);
+const MORE = [
+  { href: '/stats', label: 'Stats', note: 'Every round, bet and pool update, read from the chain' },
+  { href: '/learn', label: 'How it works', note: 'Rounds, prices, settlement, and the pool' },
+];
+const isCurrent = (path: string, href: string) => path === href || (href === '/results' && path.startsWith('/rounds/'));
 
 export function Header() {
   const path = usePathname();
@@ -25,6 +34,8 @@ export function Header() {
   const balances = useBalances(address);
 
   const [lifted, setLifted] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  useEffect(() => setMoreOpen(false), [path]);
   // Below 860px the island keeps one row and the pages move to a bottom tab bar, within thumb
   // reach. `useMedia` is null until mounted, so the wide layout is what renders on the server.
   const compact = useMedia('(max-width: 860px)') ?? false;
@@ -56,7 +67,7 @@ export function Header() {
         {compact ? null : (
           <nav className="nav" aria-label="Main">
             {NAV.map((n) => (
-              <Link key={n.href} href={n.href} aria-current={path === n.href || (n.href === '/results' && path.startsWith('/rounds/')) ? 'page' : undefined}>
+              <Link key={n.href} href={n.href} aria-current={isCurrent(path, n.href) ? 'page' : undefined}>
                 <span>{n.label}</span>
               </Link>
             ))}
@@ -108,12 +119,31 @@ export function Header() {
       </div>
       {compact ? (
         <nav className="tabbar" aria-label="Main">
-          {NAV.map((n) => (
-            <Link key={n.href} href={n.href} aria-current={path === n.href || (n.href === '/results' && path.startsWith('/rounds/')) ? 'page' : undefined}>
+          {TABS.map((n) => (
+            <Link key={n.href} href={n.href} aria-current={isCurrent(path, n.href) ? 'page' : undefined}>
               <span>{n.label}</span>
             </Link>
           ))}
+                  <button type="button" className="tab-more" aria-current={MORE.some((m) => path === m.href) ? 'page' : undefined} aria-haspopup="dialog" onClick={() => setMoreOpen(true)}>
+            <span>More</span>
+          </button>
         </nav>
+      ) : null}
+      {compact && moreOpen ? (
+        <Sheet open onClose={() => setMoreOpen(false)} title="More">
+          <div className="more-list">
+            {MORE.map((m) => (
+              <Link key={m.href} href={m.href} className="more-row" aria-current={path === m.href ? 'page' : undefined}>
+                <b>{m.label}</b>
+                <span className="small">{m.note}</span>
+              </Link>
+            ))}
+            <a className="more-row" href="https://github.com/Cybire1/renqun" target="_blank" rel="noreferrer">
+              <b>Source code ↗</b>
+              <span className="small">Contracts, keeper, web and iOS app, on GitHub</span>
+            </a>
+          </div>
+        </Sheet>
       ) : null}
     </header>
   );
